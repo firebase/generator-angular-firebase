@@ -28,6 +28,7 @@
     "route",
     "service",
     "templates",
+    "util",
     "value",
     "view",
     "angularfire-config.json",
