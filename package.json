@@ -30,6 +30,7 @@
     "templates",
     "value",
     "view",
+    "angularfire-config.json",
     "script-base.js",
     "util.js"
   ],
