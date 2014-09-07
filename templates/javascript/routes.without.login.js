@@ -18,10 +18,5 @@ angular.module('<%= scriptAppName %>')
         controller: 'MainCtrl'
       })
 
-      .when('/chat', {
-        templateUrl: 'views/chat.html',
-        controller: 'ChatCtrl'
-      })
-
       .otherwise({redirectTo: '/'});
   }]);
