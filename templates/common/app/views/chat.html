@@ -5,7 +5,7 @@
   <div class="form-group">
     <input placeholder="Message..." ng-model="newMessage" class="form-control">
   </div>
-  <button type="submit" ng-click="addMessage(newMessage);newMessage = null;" class="btn btn-default">send</button>
+  <button type="submit" ng-click="addMessage(newMessage, user);newMessage = null;" class="btn btn-default">send</button>
 </form>
 
 <ul id="messages" ng-show="messages.length" class="list-unstyled list-group chat">

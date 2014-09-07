@@ -12,10 +12,10 @@ angular.module('<%= scriptAppName %>')
       init();
 
       // provide a method for adding a message
-      $scope.addMessage = function(newMessage) {
+      $scope.addMessage = function(newMessage, user) {
         if( newMessage ) {
           // push a message to the end of the array
-          $scope.messages.$add({text: newMessage})
+          $scope.messages.$add({text: newMessage, user: user})
             // display any errors
             .catch(alert);
         }

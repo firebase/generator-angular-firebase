@@ -30,8 +30,8 @@ angular.module("<%= scriptAppName %>").controller "ChatCtrl", ($scope, fbutil, $
 
 
   # provide a method for adding a message
-  $scope.addMessage = (newMessage) ->
+  $scope.addMessage = (newMessage, user) ->
     if newMessage
 
       # push a message to the end of the array
-      $scope.messages.$add(text: newMessage).then null, alert
+      $scope.messages.$add(text: newMessage, user: user).then null, alert
