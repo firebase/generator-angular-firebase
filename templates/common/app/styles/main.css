@@ -77,3 +77,13 @@ body {
     border-bottom: 0;
   }
 }
+
+/* Chat feature */
+.chat {
+  margin-top: 20px;
+}
+
+.chat-msg {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
