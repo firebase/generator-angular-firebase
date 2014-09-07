@@ -86,7 +86,7 @@ angular.module("<%= scriptAppName %>").config([
       controller: "LoginCtrl"
     )
 
-    .when("/chat",
+    .whenAuthenticated("/chat",
       templateUrl: "views/chat.html"
       controller: "ChatCtrl"
     )

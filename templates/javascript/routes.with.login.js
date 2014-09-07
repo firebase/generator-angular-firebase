@@ -67,7 +67,7 @@ angular.module('<%= scriptAppName %>')
         controller: 'LoginCtrl'
       })
 
-      .when('/chat', {
+      .whenAuthenticated('/chat', {
         templateUrl: 'views/chat.html',
         controller: 'ChatCtrl'
       })
