@@ -1,5 +1,6 @@
 Description:
     Creates a new Angular directive
+    Docs: https://docs.angularjs.org/guide/directive
 
 Example:
     yo angularfire:directive thing [--coffee]
