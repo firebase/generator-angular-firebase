@@ -7,39 +7,50 @@
  * Provides rudimentary account management functions.
  */
 angular.module('<%= scriptAppName %>')
-  .controller('AccountCtrl', function ($scope, user, Auth, Ref, $firebaseObject<% if( hasPasswordProvider ) { %>, $timeout<% } %>) {
-    $scope.user = user;
-    $scope.logout = function() { Auth.$unauth(); };
+  .controller('AccountCtrl', ["$scope", "auth", "$firebaseObject", "currentAuth", function (
+    $scope,
+    auth,
+    currentAuth,
+    $firebaseObject
+  <% if( hasPasswordProvider ) { %>, $timeout <% } %>
+  ) {
+
     $scope.messages = [];
-    var profile = $firebaseObject(Ref.child('users').child(user.uid));
-    profile.$bindTo($scope, 'profile');
+    currentAuth.$bindTo($scope, 'currentAuth');
+
     <% if( hasPasswordProvider ) { %>
 
     $scope.changePassword = function(oldPass, newPass, confirm) {
       $scope.err = null;
+
       if( !oldPass || !newPass ) {
         error('Please enter all fields');
-      }
-      else if( newPass !== confirm ) {
+
+      } else if( newPass !== confirm ) {
         error('Passwords do not match');
-      }
-      else {
-        Auth.$changePassword({email: profile.email, oldPassword: oldPass, newPassword: newPass})
-          .then(function() {
-            success('Password changed');
-          }, error);
+
+      } else {
+        // New Method
+        auth.$updatePassword(newPass).then(function() {
+          success('Password changed');
+        }, error);
+
       }
     };
 
-    $scope.changeEmail = function(pass, newEmail) {
-      $scope.err = null;
-      Auth.$changeEmail({password: pass, newEmail: newEmail, oldEmail: profile.email})
-        .then(function() {
-          profile.email = newEmail;
-          profile.$save();
-          success('Email changed');
+    $scope.changeEmail = function (newEmail) {
+      console.log('changing');
+      auth.$updateEmail(newEmail)
+        .then(function () {
+          console.log("changed");
         })
-        .catch(error);
+        .catch(function (error) {
+          console.log("Error: ", error);
+        })
+    };
+
+    $scope.logout = function() {
+      auth.$signOut();
     };
 
     function error(err) {
@@ -58,4 +69,4 @@ angular.module('<%= scriptAppName %>')
       }, 10000);
     }<% } %>
 
-  });
+  }]);
