@@ -7,16 +7,19 @@
  * Provides rudimentary account management functions.
  */
 angular.module('<%= scriptAppName %>')
-  .controller('AccountCtrl', ["$scope", "auth", "$firebaseObject", "currentAuth", function (
+  .controller('AccountCtrl', ["$scope", "auth", "currentAuth", function (
     $scope,
     auth,
-    currentAuth,
-    $firebaseObject
+    currentAuth
   <% if( hasPasswordProvider ) { %>, $timeout <% } %>
   ) {
 
-    $scope.messages = [];
-    currentAuth.$bindTo($scope, 'currentAuth');
+  $scope.user = {
+    uid: currentAuth.uid,
+    name: currentAuth.displayName,
+    photo: currentAuth.photoURL,
+    email: currentAuth.email
+  };
 
     <% if( hasPasswordProvider ) { %>
 
@@ -32,17 +35,16 @@ angular.module('<%= scriptAppName %>')
       } else {
         // New Method
         auth.$updatePassword(newPass).then(function() {
-          success('Password changed');
+          console.log('Password changed');
         }, error);
 
       }
     };
 
     $scope.changeEmail = function (newEmail) {
-      console.log('changing');
       auth.$updateEmail(newEmail)
         .then(function () {
-          console.log("changed");
+          console.log("email changed successfully");
         })
         .catch(function (error) {
           console.log("Error: ", error);
@@ -54,7 +56,7 @@ angular.module('<%= scriptAppName %>')
     };
 
     function error(err) {
-      alert(err, 'danger');
+      console.log("Error: ", err);
     }
 
     function success(msg) {
@@ -68,5 +70,18 @@ angular.module('<%= scriptAppName %>')
         $scope.messages.splice($scope.messages.indexOf(obj), 1);
       }, 10000);
     }<% } %>
+
+  $scope.updateProfile = function(name, imgUrl) {
+    firebase.auth().currentUser.updateProfile({
+      displayName: name,
+      photoURL: imgUrl
+    })
+      .then(function () {
+        console.log("updated");
+      })
+      .catch(function (error) {
+        console.log("error ", error);
+      })
+  };
 
   }]);
