@@ -7,14 +7,9 @@
  * Manages authentication to any active providers.
  */
 angular.module('<%= scriptAppName %>')
-  .controller('LoginCtrl', ["$scope", "$firebaseAuth", function ($scope, $firebaseAuth, $location) {
+  .controller('LoginCtrl', ["$scope", "auth", "$location", "$firebaseArray", function ($scope, auth, $location, $firebaseArray) {
 
-    //<% if( hasPasswordProvider ) { %>, $q, Ref, $timeout<% } %>) {
-
-    $scope.authObj = $firebaseAuth();
-
-    <%
-    if (hasOauthProviders) { %>
+    <% if (hasOauthProviders) { %>
 
       // SignIn with a Provider
       $scope.oauthLogin = function (provider) {
@@ -25,7 +20,7 @@ angular.module('<%= scriptAppName %>')
           })
           .catch(function (error) {
             console.log("login error");
-            showError();
+            showError(error);
           })
       };
 
@@ -42,10 +37,9 @@ angular.module('<%= scriptAppName %>')
           })
       };
 
-    <%
-    }
-    %><%
-    if (hasPasswordProvider) { %>
+    <% } %>
+
+    <% if (hasPasswordProvider) { %>
 
       // Autenthication with password and email
       $scope.passwordLogin = function (email, pass) {
@@ -61,57 +55,35 @@ angular.module('<%= scriptAppName %>')
           });
       };
 
-      // Create user with email and password
       $scope.createAccount = function (email, pass, confirm) {
         $scope.err = null;
 
         if (!pass) {
           $scope.err = 'Please enter a password';
-
-        }
-        else if (pass !== confirm) {
+        } else if (pass !== confirm) {
           $scope.err = 'Passwords do not match';
-
         } else {
-
-          // After creating the account, user will automatically login
-          $scope.authObj.$createUserWithEmailAndPassword(email, pass)
+          auth.$createUserWithEmailAndPassword(email, pass)
             .then(function (userData) {
-              console.log("User " + userData.uid + " created successfully!");
+              console.log("User " + userData.uid + " created successfully");
             })
             .then(function (authData) {
-              console.log("Logged in as: " + authData.uid);
+            console.log("Logged user: ", authData.uid);
+              createProfile();
               redirect();
             })
             .catch(function (error) {
-              console.log("Error: ", error);
-              showError();
-            })
-        }
-
-      };
-
-      $scope.createAccount = function (email, pass, confirm) {
-        $scope.err = null;
-        if (!pass) {
-          $scope.err = 'Please enter a password';
-        }
-        else if (pass !== confirm) {
-          $scope.err = 'Passwords do not match';
-        }
-        else {
-          Auth.$createUser({email: email, password: pass})
-            .then(function () {
-              // authenticate so we have permission to write to Firebase
-              return Auth.$authWithPassword({email: email, password: pass}, {rememberMe: true});
-            })
-            .then(createProfile)
-            .then(redirect, showError);
-        }
+              console.error("Error: ", error);
+            });
+          }
+        };
 
         //todo wait till SDK 3.x support comes up to test
         function createProfile(user) {
-          var ref = Ref.child('users').child(user.uid), def = $q.defer();
+
+          // var query =
+          var userObj = rootRef.child('users').child(user.uid);
+          var def = $q.defer();
           ref.set({email: email, name: firstPartOfEmail(email)}, function (err) {
             $timeout(function () {
               if (err) {
@@ -138,9 +110,7 @@ angular.module('<%= scriptAppName %>')
         return f + str.substr(1);
       }
 
-    <%
-    }
-    %>
+    <% } %>
 
     function redirect() {
       $location.path('/account');
