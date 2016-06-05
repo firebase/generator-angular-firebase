@@ -194,6 +194,8 @@ var Generator = module.exports = function Generator(args, options) {
     });
 
     //angularfire
+    /*
+    * Commented, routes are created manually to set proper configurations
     if (this.env.options.ngRoute) {
       this.invoke('angularfire3.x:route', {
         args: ['chat'],
@@ -211,7 +213,7 @@ var Generator = module.exports = function Generator(args, options) {
           options: {skipController: true, skipView: true, authRequired: true}
         });
       }
-    }
+    }*/
 
     //angularfire
   });

@@ -66,8 +66,7 @@ angular.module('<%= scriptAppName %>')
     $routeProvider
       .when('/', {
         templateUrl: 'views/main.html',
-        controller: 'MainCtrl',
-
+        controller: 'MainCtrl'
         //controllerAs: 'main'
       })
       .when('/about', {
@@ -77,7 +76,7 @@ angular.module('<%= scriptAppName %>')
       })
       .when('/login', {
         templateUrl: 'views/login.html',
-        controller: 'Login',
+        controller: 'Login'
       })
       .when('/account', {
         templateUrl: 'views/account.html',

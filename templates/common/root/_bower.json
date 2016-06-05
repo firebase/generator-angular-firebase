@@ -22,4 +22,14 @@
   }<% if (appPath) { %>,
   "appPath": "<%= appPath %>"<% } %>,
   "moduleName": "<%= scriptAppName %>"
+  <% if (bootstrap_ %>,
+  "overrides": {
+    "bootstrap": {
+      "main": [
+      "less/bootstrap.less",
+      "dist/css/bootstrap.css",
+      "dist/js/bootstrap.js"
+      ]
+    }
+  }
 }
