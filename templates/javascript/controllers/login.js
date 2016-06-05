@@ -13,7 +13,7 @@ angular.module('<%= scriptAppName %>')
 
       // SignIn with a Provider
       $scope.oauthLogin = function (provider) {
-        $scope.authObj.$signInWithPopup(provider)
+        auth.$signInWithPopup(provider)
           .then(function (authData) {
             console.log("logged");
             redirect();
@@ -26,14 +26,12 @@ angular.module('<%= scriptAppName %>')
 
       // Anonymous login method
       $scope.anonymousLogin = function () {
-        $scope.authObj.$signInAnonymously()
+        auth.$signInAnonymously()
           .then(function (authData) {
-            console.log("logged");
-            redirect();
+            console.log("logged ", authData.uid);
           })
           .catch(function (error) {
-            console.log("login error");
-            showError();
+            console.log("login error ", error);
           })
       };
 
@@ -44,7 +42,7 @@ angular.module('<%= scriptAppName %>')
       // Autenthication with password and email
       $scope.passwordLogin = function (email, pass) {
 
-        $scope.authObj.$signInWithEmailAndPassword(email, pass)
+        auth.$signInWithEmailAndPassword(email, pass)
           .then(function (authData) {
             redirect();
             console.log("logged");
@@ -96,8 +94,6 @@ angular.module('<%= scriptAppName %>')
           });
           return def.promise;
         }
-
-      };
 
       function firstPartOfEmail(email) {
         return ucfirst(email.substr(0, email.indexOf('@')) || '');

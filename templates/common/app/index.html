@@ -21,7 +21,7 @@
 <![endif]-->
 
 <!-- Add your site or application content here -->
-<div class="header" ng-cloak>
+<div class="header" ng-controller="MainCtrl" ng-cloak>
   <div class="navbar navbar-default" role="navigation">
     <div class="container">
       <div class="navbar-header">
@@ -41,22 +41,17 @@
         <div class="collapse">
           <% } %>
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#/">Home</a></li>
             <!-- //angularfire -->
-            <%
-            if (ngRoute) {
-            %>
-            <li><a ng-href="#/chat">chat</a></li>
-            <%
-            if (loginModule) {
-            %>
+            <% if (ngRoute) { %>
+            <li class=""><a href="#/chat">Chat</a></li>
+            <% if (loginModule) { %>
             <li>
-              <a ng-hide-auth href="#/login">log in</a>
-              <a ng-show-auth href="#/account">account</a>
+            <li class="active"><a href="#/login" ng-show="loginBtn">Login
+            </a></li>
+            <li class=""><a href="#/account">Account</a></li>
+            <li class=""><a href="#/chat" ng-click="logout()" ng-show="logoutBtn">Logout</a></li>
             </li>
-            <%
-            }}
-            %>
+            <% }} %>
           </ul>
         </div>
       </div>
@@ -64,15 +59,11 @@
   </div>
 
   <div class="container">
-    <% if (ngRoute) {
-    %>
+    <% if (ngRoute) { %>
     <div ng-view></div>
-    <%
-    } else {
-    %>
+    <% } else { %>
     <div ng-include="'views/chat.html'" ng-controller="ChatCtrl"></div>
-    <%
-    } %>
+    <% } %>
   </div>
 
   <div class="footer">

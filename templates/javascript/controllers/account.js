@@ -23,6 +23,8 @@ angular.module('<%= scriptAppName %>')
 
     <% if( hasPasswordProvider ) { %>
 
+    $scope.authInfo = currentAuth;
+    
     $scope.changePassword = function(oldPass, newPass, confirm) {
       $scope.err = null;
 

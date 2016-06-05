@@ -139,15 +139,15 @@ var Generator = module.exports = function Generator(args, options) {
     this.env.options.coffee = this.options.coffee;
   }
 
-  this.hookFor('angularfire3x:common', {
+  this.hookFor('angularfire3.x:common', {
     args: args
   });
 
-  this.hookFor('angularfire3x:main', {
+  this.hookFor('angularfire3.x:main', {
     args: args
   });
 
-  this.hookFor('angularfire3x:controller', {
+  this.hookFor('angularfire3.x:controller', {
     args: args
   });
 
@@ -195,18 +195,18 @@ var Generator = module.exports = function Generator(args, options) {
 
     //angularfire
     if (this.env.options.ngRoute) {
-      this.invoke('angularfire3x:route', {
+      this.invoke('angularfire3.x:route', {
         args: ['chat'],
         options: {skipController: true, skipView: true, authRequired: false}
       });
 
       if (this.env.options.loginModule) {
-        this.invoke('angularfire3x:route', {
+        this.invoke('angularfire3.x:route', {
           args: ['login'],
           options: {skipController: true, skipView: true, authRequired: false}
         });
 
-        this.invoke('angularfire3x:route', {
+        this.invoke('angularfire3.x:route', {
           args: ['account'],
           options: {skipController: true, skipView: true, authRequired: true}
         });
@@ -403,11 +403,9 @@ Generator.prototype.askForModules = function askForModules() {
 
     //angularfire
     angMods.push("'firebase'");
-    // angMods.push("'firebase.ref'");
-    // angMods.push("'firebase.conf'");
     if (this.loginModule) {
       this.env.options.loginModule = true;
-      // angMods.push("'firebase.auth'");
+      angMods.push("'firebase.auth'");
     }
 
     if (angMods.length) {
@@ -441,7 +439,7 @@ Generator.prototype.copyAngularFireFiles = function () {
   this._tpl('filters/reverse');
 
   if (this.loginModule) {
-    // this._common('scripts/angularfire/auth.js');
+    this._common('scripts/angularfire/auth.js');
     this._tpl('controllers/login');
     this._tpl('controllers/account');
     this._htmlTpl('views/login.html');
