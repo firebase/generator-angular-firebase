@@ -105,16 +105,6 @@ angular.module('<%= scriptAppName %>')
         redirectTo: '/'
       });
 
-    function check(user) {
-      if (!user && authRequired($location.path())) {
-        $location.path(loginRedirectPath);
-      }
-    }
-
-    function authRequired(path) {
-      return SECURED_ROUTES.hasOwnProperty(path);
-    }
-
   }])
 
   /**
@@ -139,5 +129,3 @@ angular.module('<%= scriptAppName %>')
       });
     }
   ])
-  // used by route security
-  .constant('SECURED_ROUTES', {});
