@@ -22,7 +22,7 @@
   }<% if (appPath) { %>,
   "appPath": "<%= appPath %>"<% } %>,
   "moduleName": "<%= scriptAppName %>"
-  <% if (bootstrap_ %>,
+  <% if (bootstrap) %>,
   "overrides": {
     "bootstrap": {
       "main": [

@@ -9,6 +9,23 @@
 angular.module('<%= scriptAppName %>')
   .controller('LoginCtrl', ["$scope", "auth", "$location", "$firebaseArray", function ($scope, auth, $location, $firebaseArray) {
 
+    $scope.loginBtn = true;
+    $scope.logoutBtn = true;
+
+    auth.$onAuthStateChanged(function (authData) {
+      if (authData) {
+        // console.log(" logged dude: " + authData.uid);
+        $scope.logoutBtn = true;
+        $scope.loginBtn = false;
+        $location.path('/account');
+      } else {
+        console.log("damn logged out");
+        $scope.logoutBtn = false;
+        $scope.loginBtn = true;
+        $location.path('/login');
+      }
+    });
+
     <% if (hasOauthProviders) { %>
 
       // SignIn with a Provider

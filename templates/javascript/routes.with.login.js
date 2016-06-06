@@ -76,11 +76,11 @@ angular.module('<%= scriptAppName %>')
       })
       .when('/login', {
         templateUrl: 'views/login.html',
-        controller: 'Login'
+        controller: 'LoginCtrl'
       })
       .when('/account', {
         templateUrl: 'views/account.html',
-        controller: 'Account',
+        controller: 'AccountCtrl',
         resolve: {
           "currentAuth": ["auth", function (auth) {
             // returns a promisse so the resolve waits for it to complete

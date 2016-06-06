@@ -17,10 +17,12 @@ var FIREBASE_PROMPTS = [
     message: "What's your Api Key? ",
     required: true,
     validate: function (input) {
-      /*if (!input || input.length < 35) {
-       return false;
-       }*/
       return true;
+
+      if (!input || input.length < 35) {
+        return chalk.red(" It must have more than 35 char.");
+      }
+
     }
   }, {
     name: 'authDomain',
@@ -42,16 +44,13 @@ var FIREBASE_PROMPTS = [
     }
   }, {
     name: 'databaseURL',
-    // name: 'firebaseName',
     message: colors('Database URL: '),
     required: true,
     validate: function (input) {
+      return true;
       if (!input) {
         return false;
       }
-      // if (input.match('http') || input.match('firebaseio.com')) {
-      //   return chalk.red('Just include the Firebase name, not the entire URL');
-      // }
       // if (!input.match(/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/)) {
       //   return chalk.red('Your Firebase name may only contain [a-z], [0-9], and hyphen (-). ' +
       //     'It may not start or end with a hyphen.');
@@ -63,6 +62,10 @@ var FIREBASE_PROMPTS = [
     message: colors('Storage Bucket: '),
     required: true,
     validate: function (input) {
+      return true;
+      if (!input.match(/.appspot.com/)) {
+        return chalck.red('It must contain "appspot.com" at the end.');
+      }
       return true;
     }
   }, {
