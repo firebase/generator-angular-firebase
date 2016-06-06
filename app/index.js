@@ -123,30 +123,34 @@ var Generator = module.exports = function Generator(args, options) {
 
   this.appPath = this.env.options.appPath;
 
-  if (typeof this.env.options.coffee === 'undefined') {
-    this.option('coffee', {
-      desc: 'Generate CoffeeScript instead of JavaScript'
-    });
+  /*
+   * Coffe script not yet done, commented until I update the files
+   */
+  // if (typeof this.env.options.coffee === 'undefined') {
+  //   this.option('coffee', {
+  //     desc: 'Generate CoffeeScript instead of JavaScript'
+  //   });
+  //
+  //   // attempt to detect if user is using CS or not
+  //   // if cml arg provided, use that; else look for the existence of cs
+  //   if (!this.options.coffee &&
+  //     this.expandFiles(path.join(this.appPath, '/scripts/**/*.coffee'), {}).length > 0) {
+  //     this.options.coffee = true;
+  //   }
+  //
+  //   this.env.options.coffee = this.options.coffee;
+  // }
+  
 
-    // attempt to detect if user is using CS or not
-    // if cml arg provided, use that; else look for the existence of cs
-    if (!this.options.coffee &&
-      this.expandFiles(path.join(this.appPath, '/scripts/**/*.coffee'), {}).length > 0) {
-      this.options.coffee = true;
-    }
-
-    this.env.options.coffee = this.options.coffee;
-  }
-
-  this.hookFor('angularfire3.x:common', {
+  this.hookFor('angularfire:common', {
     args: args
   });
 
-  this.hookFor('angularfire3.x:main', {
+  this.hookFor('angularfire:main', {
     args: args
   });
 
-  this.hookFor('angularfire3.x:controller', {
+  this.hookFor('angularfire:controller', {
     args: args
   });
 
@@ -196,18 +200,18 @@ var Generator = module.exports = function Generator(args, options) {
     /*
     * Commented, routes are created manually to set proper configurations
     if (this.env.options.ngRoute) {
-      this.invoke('angularfire3.x:route', {
+      this.invoke('angularfire:route', {
         args: ['chat'],
         options: {skipController: true, skipView: true, authRequired: false}
       });
 
       if (this.env.options.loginModule) {
-        this.invoke('angularfire3.x:route', {
+        this.invoke('angularfire:route', {
           args: ['login'],
           options: {skipController: true, skipView: true, authRequired: false}
         });
 
-        this.invoke('angularfire3.x:route', {
+        this.invoke('angularfire:route', {
           args: ['account'],
           options: {skipController: true, skipView: true, authRequired: true}
         });

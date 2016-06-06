@@ -1,5 +1,5 @@
 {
-  "name": "generator-angularfire3x",
+  "name": "generator-angularfire",
   "version": "2.0.0",
   "description": "Yeoman generator for Angular+Firebase",
   "keywords": [
@@ -34,7 +34,7 @@
     "util.js",
     "angularfire"
   ],
-  "repository": "firebase/generator-angularfire3x",
+  "repository": "firebase/generator-angularfire",
   "scripts": {
     "test": "mocha"
   },
@@ -48,6 +48,7 @@
     "generator-karma": ">=0.9.0"
   },
   "devDependencies": {
+    "angular": "^1.3.0",
     "generator-karma": "^2.0.0",
     "grunt": "^0.4.5",
     "grunt-contrib-jshint": "^0.11.0",
