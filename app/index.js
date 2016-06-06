@@ -17,19 +17,17 @@ var FIREBASE_PROMPTS = [
     message: "What's your Api Key? ",
     required: true,
     validate: function (input) {
-      return true;
-
       if (!input || input.length < 35) {
         return chalk.red(" It must have more than 35 char.");
       }
-
+      return true;
     }
   }, {
     name: 'authDomain',
     message: "What's your authentication domain? ",
     required: true,
     validate: function (input) {
-      /*if (!input) {
+      if (!input) {
        return false;
        }
        if (input.match('firebaseio.com')) {
@@ -39,7 +37,7 @@ var FIREBASE_PROMPTS = [
        if (!input.match(/^[a-z0-9]([a-z0-9-]*[a-z0-9]*[.])*([a-z]*[.]*[a-z])?/)) {
        return chalk.red('Your Authentication Domain may only contain [a-z], [0-9], hyphen (-) and a dot(.). ' +
        'It may not start or end with a hyphen or dot.');
-       }*/
+       }
       return true;
     }
   }, {
@@ -47,14 +45,13 @@ var FIREBASE_PROMPTS = [
     message: colors('Database URL: '),
     required: true,
     validate: function (input) {
-      return true;
       if (!input) {
         return false;
       }
-      // if (!input.match(/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/)) {
-      //   return chalk.red('Your Firebase name may only contain [a-z], [0-9], and hyphen (-). ' +
-      //     'It may not start or end with a hyphen.');
-      // }
+      if (!input.match(/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/)) {
+        return chalk.red('Your Firebase name may only contain [a-z], [0-9], and hyphen (-). ' +
+          'It may not start or end with a hyphen.');
+      }
       return true;
     }
   }, {
@@ -62,9 +59,8 @@ var FIREBASE_PROMPTS = [
     message: colors('Storage Bucket: '),
     required: true,
     validate: function (input) {
-      return true;
       if (!input.match(/.appspot.com/)) {
-        return chalck.red('It must contain "appspot.com" at the end.');
+        return chalk.red('It must contain "appspot.com" at the end.');
       }
       return true;
     }

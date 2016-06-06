@@ -66,8 +66,12 @@ angular.module('<%= scriptAppName %>')
     $routeProvider
       .when('/', {
         templateUrl: 'views/main.html',
-        controller: 'MainCtrl'
-        //controllerAs: 'main'
+        controller: 'MainCtrl',
+        resolve: {
+          "currentAuth": ["auth", function (auth) {
+            return auth.$waitForSignIn();
+          }]
+        }
       })
       .when('/about', {
         templateUrl: 'views/about.html',
@@ -93,7 +97,7 @@ angular.module('<%= scriptAppName %>')
         controller: 'Chat',
         resolve: {
           "currentAuth": ["auth", function (auth) {
-            return auth.$requireSignIn();
+            return auth.$waitForSignIn();
           }]
         }
       })

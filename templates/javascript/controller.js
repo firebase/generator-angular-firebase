@@ -17,6 +17,7 @@ angular.module('<%= scriptAppName %>')
 
     $scope.logout = function () {
       auth.$signOut();
+      console.log('logged out');
       $scope.authData = null;
     };
 

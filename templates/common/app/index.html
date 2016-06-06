@@ -45,12 +45,9 @@
             <% if (ngRoute) { %>
             <li class=""><a href="#/chat">Chat</a></li>
             <% if (loginModule) { %>
-            <li>
-            <li class=""><a href="#/login" ng-show="loginBtn">Login
-            </a></li>
-            <li class=""><a href="#/account">Account</a></li>
-            <li class=""><a href="#/chat" ng-click="logout()" ng-show="logoutBtn">Logout</a></li>
-            </li>
+            <li class=""><a href="#/account" ng-show-auth>Account</a></li>
+            <li class=""><a href="#/login" ng-hide-auth>Login</a></li>
+            <li class=""><a href="" ng-show-auth ng-click="logout()">Logout</a></li>
             <% }} %>
           </ul>
         </div>

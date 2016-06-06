@@ -7,7 +7,7 @@
  * Manages authentication to any active providers.
  */
 angular.module('<%= scriptAppName %>')
-  .controller('LoginCtrl', ["$scope", "auth", "$location", "$firebaseArray", function ($scope, auth, $location, $firebaseArray) {
+  .controller('LoginCtrl', ["$scope", "auth", "$location", function ($scope, auth, $location) {
 
     $scope.loginBtn = true;
     $scope.logoutBtn = true;
@@ -19,7 +19,7 @@ angular.module('<%= scriptAppName %>')
         $scope.loginBtn = false;
         $location.path('/account');
       } else {
-        console.log("damn logged out");
+        console.log("logged out");
         $scope.logoutBtn = false;
         $scope.loginBtn = true;
         $location.path('/login');
