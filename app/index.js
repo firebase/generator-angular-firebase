@@ -48,6 +48,11 @@ var FIREBASE_PROMPTS = [
       if (!input) {
         return false;
       }
+      if (input.match(/http/) || input.match(/.firebaseio.com/)) {
+          var msg = chalk.red('Just include the name of your database, not your entire URL.\n\n');
+          msg = msg + chalk.yellow('https://<< NAME HERE >>.firebaseio.com');
+        return msg;
+      }
       if (!input.match(/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/)) {
         return chalk.red('Your Firebase name may only contain [a-z], [0-9], and hyphen (-). ' +
           'It may not start or end with a hyphen.');
@@ -140,7 +145,7 @@ var Generator = module.exports = function Generator(args, options) {
   //
   //   this.env.options.coffee = this.options.coffee;
   // }
-  
+
 
   this.hookFor('angularfire:common', {
     args: args
