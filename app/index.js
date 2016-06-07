@@ -42,14 +42,14 @@ var FIREBASE_PROMPTS = [
     }
   }, {
     name: 'databaseURL',
-    message: colors('Database URL: '),
+    message: colors('Database name: '),
     required: true,
     validate: function (input) {
       if (!input) {
         return false;
       }
       if (input.match(/http/) || input.match(/.firebaseio.com/)) {
-          var msg = chalk.red('Just include the name of your database, not your entire URL.\n\n');
+          var msg = chalk.red('Just include the name of your database, not the entire URL.\n\n');
           msg = msg + chalk.yellow('https://<< NAME HERE >>.firebaseio.com');
         return msg;
       }
@@ -351,7 +351,8 @@ Generator.prototype.askForModules = function askForModules() {
         value: 'routeModule',
         name: 'angular-route.js',
         checked: true
-      }, {
+      },
+      {
         value: 'sanitizeModule',
         name: 'angular-sanitize.js',
         checked: true

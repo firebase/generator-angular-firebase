@@ -14,15 +14,10 @@ angular.module('<%= scriptAppName %>')
 
     auth.$onAuthStateChanged(function (authData) {
       if (authData) {
-        // console.log(" logged dude: " + authData.uid);
+        console.log(" logged: " + authData.uid);
         $scope.logoutBtn = true;
         $scope.loginBtn = false;
         $location.path('/account');
-      } else {
-        console.log("logged out");
-        $scope.logoutBtn = false;
-        $scope.loginBtn = true;
-        $location.path('/login');
       }
     });
 
@@ -81,6 +76,7 @@ angular.module('<%= scriptAppName %>')
           auth.$createUserWithEmailAndPassword(email, pass)
             .then(function (userData) {
               console.log("User " + userData.uid + " created successfully");
+              return userData;
             })
             .then(function (authData) {
             console.log("Logged user: ", authData.uid);
