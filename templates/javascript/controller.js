@@ -8,18 +8,10 @@
  * Controller of the <%= scriptAppName %>
  */
 angular.module('<%= scriptAppName %>')
-  .controller('<%= classedName %>Ctrl', ["auth", "$scope", "$location", function (auth, $scope, $location) {
+  .controller('<%= classedName %>Ctrl', function ($scope) {
     $scope.awesomeThings = [
       'HTML5 Boilerplate',
       'AngularJS',
       'Karma'
     ];
-
-    $scope.logout = function () {
-      auth.$signOut();
-      console.log('logged out');
-      $location.path('/login');
-      $scope.authData = null;
-    };
-
-  }]);
+  });

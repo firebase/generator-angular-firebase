@@ -7,17 +7,13 @@
  * Manages authentication to any active providers.
  */
 angular.module('<%= scriptAppName %>')
-  .controller('LoginCtrl', ["$scope", "auth", "$location", function ($scope, auth, $location) {
-
-    $scope.loginBtn = true;
-    $scope.logoutBtn = true;
+  .controller('LoginCtrl', ["$scope", "auth", "$location", "$firebaseArray", "Ref", function ($scope, auth, $location, $firebaseArray, Ref) {
 
     auth.$onAuthStateChanged(function (authData) {
       if (authData) {
+        $scope.err = null;
         console.log(" logged: " + authData.uid);
-        $scope.logoutBtn = true;
-        $scope.loginBtn = false;
-        $location.path('/account');
+        redirect();
       }
     });
 
@@ -28,10 +24,8 @@ angular.module('<%= scriptAppName %>')
         auth.$signInWithPopup(provider)
           .then(function (authData) {
             console.log("logged");
-            redirect();
           })
           .catch(function (error) {
-            console.log("login error");
             showError(error);
           })
       };
@@ -56,12 +50,10 @@ angular.module('<%= scriptAppName %>')
 
         auth.$signInWithEmailAndPassword(email, pass)
           .then(function (authData) {
-            redirect();
             console.log("logged");
           })
           .catch(function (error) {
             showError(error);
-            console.log("error: " + error);
           });
       };
 
@@ -80,8 +72,7 @@ angular.module('<%= scriptAppName %>')
             })
             .then(function (authData) {
             console.log("Logged user: ", authData.uid);
-              createProfile();
-              redirect();
+              createProfile(authData.uid, email);
             })
             .catch(function (error) {
               console.error("Error: ", error);
@@ -89,24 +80,20 @@ angular.module('<%= scriptAppName %>')
           }
         };
 
-        //todo wait till SDK 3.x support comes up to test
-        function createProfile(user) {
+      function createProfile(uid, email) {
 
-          // var query =
-          var userObj = rootRef.child('users').child(user.uid);
-          var def = $q.defer();
-          ref.set({email: email, name: firstPartOfEmail(email)}, function (err) {
-            $timeout(function () {
-              if (err) {
-                def.reject(err);
-              }
-              else {
-                def.resolve(ref);
-              }
-            });
+        var query = Ref.child('users');
+        var userObj = $firebaseArray(query);
+        userObj.$add({
+            email: email,
+            name: firstPartOfEmail(email),
+            id: uid
+          })
+          .then(function (ref) {
+            console.log("added user with id " + ref.key);
           });
-          return def.promise;
-        }
+
+      };
 
       function firstPartOfEmail(email) {
         return ucfirst(email.substr(0, email.indexOf('@')) || '');
@@ -126,6 +113,7 @@ angular.module('<%= scriptAppName %>')
     }
 
     function showError(err) {
+      console.log(err);
       $scope.err = err;
     }
 

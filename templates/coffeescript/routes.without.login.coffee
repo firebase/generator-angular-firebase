@@ -20,6 +20,17 @@ angular.module("<%= scriptAppName %>").config [
       templateUrl: "views/main.html"
       controller: "MainCtrl"
     )
+    .when("/chat",
+      templateUrl: "views/chat.html"
+      controller: "ChatCtrl"
+      <% if (loginModule) { %>
+      ,resolve: {
+        "currentAuth": ["auth", (auth) -> auth.$requireSignIn()]
+      }
+      <% } %>
+    )
+
+
 
     .otherwise redirectTo: "/"
 ]

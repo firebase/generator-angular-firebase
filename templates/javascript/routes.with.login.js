@@ -39,7 +39,7 @@ angular.module('<%= scriptAppName %>')
  */
 
 /*
- * Commented due to issues with the new SDK
+ * // Is this still necessary?
  *
  .config(['$routeProvider', 'SECURED_ROUTES', function ($routeProvider, SECURED_ROUTES) {
 
@@ -67,11 +67,6 @@ angular.module('<%= scriptAppName %>')
       .when('/', {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl',
-        resolve: {
-          "currentAuth": ["auth", function (auth) {
-            return auth.$waitForSignIn();
-          }]
-        }
       })
       .when('/about', {
         templateUrl: 'views/about.html',
@@ -92,15 +87,6 @@ angular.module('<%= scriptAppName %>')
           }]
         }
       })
-      .when('/chat', {
-        templateUrl: 'views/chat.html',
-        controller: 'Chat',
-        resolve: {
-          "currentAuth": ["auth", function (auth) {
-            return auth.$waitForSignIn();
-          }]
-        }
-      })
       .otherwise({
         redirectTo: '/'
       });
@@ -115,10 +101,6 @@ angular.module('<%= scriptAppName %>')
    */
   .run(['$rootScope', '$location', 'loginRedirectPath',
     function ($rootScope, $location, loginRedirectPath, event, next, previous, error) {
-
-
-      // watch for login status changes and redirect if appropriate
-      // auth.$onAuthStateChanged(check);
 
       // some of our routes may reject resolve promises with the special {authRequired: true} error
       // this redirects to the login page whenever that is encountered

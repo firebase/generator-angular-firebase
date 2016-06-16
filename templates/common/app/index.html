@@ -47,57 +47,46 @@
             <% if (loginModule) { %>
             <li class=""><a href="#/account" ng-show-auth>Account</a></li>
             <li class=""><a href="#/login" ng-hide-auth>Login</a></li>
-            <li class=""><a href="" ng-show-auth ng-click="logout()">Logout</a></li>
             <% }} %>
           </ul>
         </div>
       </div>
     </div>
   </div>
+</div>
 
+<div class="container">
+  <% if (ngRoute) { %>
+  <div ng-view></div>
+  <% } else { %>
+  <div ng-include="'views/chat.html'" ng-controller="ChatCtrl"></div>
+  <% } %>
+</div>
+
+<div class="footer">
   <div class="container">
-    <% if (ngRoute) { %>
-    <div ng-view></div>
-    <% } else { %>
-    <div ng-include="'views/chat.html'" ng-controller="ChatCtrl"></div>
-    <% } %>
+    <p><span class="glyphicon glyphicon-heart"></span> from the Yeoman team and Firebase</p>
   </div>
-
-  <div class="footer">
-    <div class="container">
-      <p><span class="glyphicon glyphicon-heart"></span> from the Yeoman team and Firebase</p>
-    </div>
-  </div>
+</div>
 
 
-  <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
-  <script>
-    !function (A, n, g, u, l, a, r) {
-      A.GoogleAnalyticsObject = l, A[l] = A[l] || function () {
-          (A[l].q = A[l].q || []).push(arguments)
-        }, A[l].l = +new Date, a = n.createElement(g),
-        r = n.getElementsByTagName(g)[0], a.src = u, r.parentNode.insertBefore(a, r)
-    }(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+<!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
+<script>
+  !function (A, n, g, u, l, a, r) {
+    A.GoogleAnalyticsObject = l, A[l] = A[l] || function () {
+        (A[l].q = A[l].q || []).push(arguments)
+      }, A[l].l = +new Date, a = n.createElement(g),
+      r = n.getElementsByTagName(g)[0], a.src = u, r.parentNode.insertBefore(a, r)
+  }(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-    ga('create', 'UA-XXXXX-X');
-    ga('send', 'pageview');
-  </script>
+  ga('create', 'UA-XXXXX-X');
+  ga('send', 'pageview');
+</script>
 
-  <!-- build:js(.) scripts/vendor.js -->
-  <!-- bower:js -->
-  <!-- endbower -->
-  <!-- endbuild -->
+<!-- build:js(.) scripts/vendor.js -->
+<!-- bower:js -->
+<!-- endbower -->
+<!-- endbuild -->
 
-  <script>
-    var config = {
-      apiKey: '<%= apiKey %>',
-      authDomain: '<%= authDomain %>',
-      databaseURL: 'https://<%= databaseURL %>.firebaseio.com',
-      storageBucket: '<%= storageBucket %>'
-    };
-
-    firebase.initializeApp(config);
-    var rootRef = firebase.database().ref();
-  </script>
 </body>
 </html>

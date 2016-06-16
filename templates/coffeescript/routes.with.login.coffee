@@ -58,46 +58,48 @@ that we can no longer view.
 # this redirects to the login page whenever that is encountered
 
 # used by route security
-angular.module("<%= scriptAppName %>").config([
-  "$routeProvider"
-  "SECURED_ROUTES"
-  ($routeProvider, SECURED_ROUTES) ->
-    $routeProvider.whenAuthenticated = (path, route) ->
-      route.resolve = route.resolve or {}
-      route.resolve.user = [
-        "Auth"
-        (Auth) ->
-          return Auth.$requireAuth()
-      ]
-      $routeProvider.when path, route
-      SECURED_ROUTES[path] = true
-      $routeProvider
-]).config([
+angular.module("<%= scriptAppName %>")
+.config([
   "$routeProvider"
   ($routeProvider) ->
-
-    $routeProvider.when("/",
+    $routeProvider
+    .when("/",
       templateUrl: "views/main.html"
-      controller: "MainCtrl"
+      controller: "MainCtrl",
+      resolve: {
+        "currentAuth": ["auth", (auth) -> auth.$waitForSignIn()]
+      }
     )
-
+    .when("/about",
+      templateUrl: "views/about.html"
+      controller: "AboutCtrl",
+    )
+    .when("/login",
+      templateUrl: "views/login.html"
+      controller: "LoginCtrl",
+      resolve: {
+        "currentAuth": ["auth", (auth) -> auth.$waitForSignIn()]
+      }
+    )
+    .when("/account",
+      templateUrl: "views/account.html"
+      controller: "AccountCtrl",
+      resolve: {
+        "currentAuth": ["auth", (auth) -> auth.$requireSignIn()]
+      }
+    )
     .otherwise redirectTo: "/"
 
-]).run([
+])
+.run([
   "$rootScope"
   "$location"
-  "Auth"
-  "SECURED_ROUTES"
+  "auth"
   "loginRedirectPath"
-  ($rootScope, $location, Auth, SECURED_ROUTES, loginRedirectPath) ->
-    check = (user) ->
-      $location.path loginRedirectPath  if not user and authRequired($location.path())
-      return
-    authRequired = (path) ->
-      SECURED_ROUTES.hasOwnProperty path
-    Auth.$onAuth check
+  ($rootScope, $location, auth, loginRedirectPath) ->
+
     $rootScope.$on "$routeChangeError", (e, next, prev, err) ->
       $location.path loginRedirectPath  if err is 'AUTH_REQUIRED'
       return
 
-]).constant "SECURED_ROUTES", {}
+])

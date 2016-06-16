@@ -14,17 +14,12 @@ angular.module('<%= scriptAppName %>')
   <% if( hasPasswordProvider ) { %>, $timeout <% } %>
   ) {
 
-  $scope.user = {
-    uid: currentAuth.uid,
-    name: currentAuth.displayName,
-    photo: currentAuth.photoURL,
-    email: currentAuth.email
-  };
+  $scope.user = currentAuth;
+  $scope.messages = [];
 
     <% if( hasPasswordProvider ) { %>
 
     $scope.authInfo = currentAuth;
-    
     $scope.changePassword = function(oldPass, newPass, confirm) {
       $scope.err = null;
 
@@ -38,6 +33,7 @@ angular.module('<%= scriptAppName %>')
         // New Method
         auth.$updatePassword(newPass).then(function() {
           console.log('Password changed');
+          success('Password changed');
         }, error);
 
       }
@@ -47,10 +43,9 @@ angular.module('<%= scriptAppName %>')
       auth.$updateEmail(newEmail)
         .then(function () {
           console.log("email changed successfully");
+          success("Email changed ");
         })
-        .catch(function (error) {
-          console.log("Error: ", error);
-        })
+        .catch(error)
     };
 
     $scope.logout = function() {
@@ -58,10 +53,12 @@ angular.module('<%= scriptAppName %>')
     };
 
     function error(err) {
+      $scope.err = err;
       console.log("Error: ", err);
     }
 
     function success(msg) {
+      $scope.msg = msg;
       alert(msg, 'success');
     }
 
@@ -72,18 +69,5 @@ angular.module('<%= scriptAppName %>')
         $scope.messages.splice($scope.messages.indexOf(obj), 1);
       }, 10000);
     }<% } %>
-
-  $scope.updateProfile = function(name, imgUrl) {
-    firebase.auth().currentUser.updateProfile({
-      displayName: name,
-      photoURL: imgUrl
-    })
-      .then(function () {
-        console.log("updated");
-      })
-      .catch(function (error) {
-        console.log("error ", error);
-      })
-  };
 
   }]);

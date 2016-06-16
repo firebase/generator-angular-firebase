@@ -7,11 +7,9 @@
  * A demo of using AngularFire to manage a synchronized list.
  */
 angular.module('<%= scriptAppName %>')
-  .controller('Chat', ["$scope", "currentAuth", "$firebaseArray", "$timeout", function ($scope, currentAuth, $firebaseArray, $timeout) {
-    $scope.user = currentAuth;
-
+  .controller('ChatCtrl', ["$scope", "$firebaseArray", "$timeout", "Ref", function ($scope, $firebaseArray, $timeout, Ref) {
     // synchronize a read-only, synchronized array of messages, limit to most recent 10
-    var query = rootRef.child('messages').limitToLast(10);
+    var query = Ref.child('messages').limitToLast(10);
     var messages = $firebaseArray(query);
 
     messages.$loaded()
@@ -25,9 +23,7 @@ angular.module('<%= scriptAppName %>')
       if (newMessage) {
         // push messages to the end of the array
         $scope.messages.$add({
-          text: newMessage,
-          user: currentAuth.displayName,
-          userId: currentAuth.uid
+          text: newMessage
         })
           .catch(alert);
       }

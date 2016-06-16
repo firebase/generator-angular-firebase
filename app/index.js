@@ -128,23 +128,20 @@ var Generator = module.exports = function Generator(args, options) {
 
   this.appPath = this.env.options.appPath;
 
-  /*
-   * Coffe script not yet done, commented until I update the files
-   */
-  // if (typeof this.env.options.coffee === 'undefined') {
-  //   this.option('coffee', {
-  //     desc: 'Generate CoffeeScript instead of JavaScript'
-  //   });
-  //
-  //   // attempt to detect if user is using CS or not
-  //   // if cml arg provided, use that; else look for the existence of cs
-  //   if (!this.options.coffee &&
-  //     this.expandFiles(path.join(this.appPath, '/scripts/**/*.coffee'), {}).length > 0) {
-  //     this.options.coffee = true;
-  //   }
-  //
-  //   this.env.options.coffee = this.options.coffee;
-  // }
+  if (typeof this.env.options.coffee === 'undefined') {
+    this.option('coffee', {
+      desc: 'Generate CoffeeScript instead of JavaScript'
+    });
+
+    // attempt to detect if user is using CS or not
+    // if cml arg provided, use that; else look for the existence of cs
+    if (!this.options.coffee &&
+      this.expandFiles(path.join(this.appPath, '/scripts/**/*.coffee'), {}).length > 0) {
+      this.options.coffee = true;
+    }
+
+    this.env.options.coffee = this.options.coffee;
+  }
 
 
   this.hookFor('angularfire:common', {
@@ -202,14 +199,15 @@ var Generator = module.exports = function Generator(args, options) {
     });
 
     //angularfire
-    /*
-    * Commented, routes are created manually to set proper configurations
+
     if (this.env.options.ngRoute) {
       this.invoke('angularfire:route', {
         args: ['chat'],
         options: {skipController: true, skipView: true, authRequired: false}
       });
 
+      /*
+       * Commented, routes are created manually to set proper configurations
       if (this.env.options.loginModule) {
         this.invoke('angularfire:route', {
           args: ['login'],
@@ -221,7 +219,8 @@ var Generator = module.exports = function Generator(args, options) {
           options: {skipController: true, skipView: true, authRequired: true}
         });
       }
-    }*/
+       */
+    }
 
     //angularfire
   });
@@ -443,8 +442,8 @@ Generator.prototype.bootstrapFiles = function bootstrapFiles() {
 //todo make this its own subgenerator separate from Angular.js gen
 //angularfire
 Generator.prototype.copyAngularFireFiles = function () {
-  // this._common('scripts/angularfire/config.js');
-  // this._common('scripts/angularfire/firebase.ref.js');
+  this._common('scripts/angularfire/config.js');
+  this._common('scripts/angularfire/firebase.ref.js');
   this._tpl('controllers/chat');
   this._htmlTpl('views/chat.html');
   this._tpl('filters/reverse');
