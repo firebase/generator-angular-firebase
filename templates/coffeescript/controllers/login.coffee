@@ -10,14 +10,10 @@ Manages authentication to any active providers.
 angular.module("<%= scriptAppName %>")
   .controller "LoginCtrl", ["$scope", "auth", "$location", "$firebaseArray", "currentAuth", "Ref", ($scope, auth, $location, $firebaseArray, currentAuth, Ref) ->
 
-  auth.$onAuthStateChanged (authData) ->
-    if (authData) {
-      $scope.err = null
-      console.log(" logged: " + authData.uid)
-      redirect()
-    }
-    return
-
+  auth.$onAuthStateChanged (authData) -> if authData
+    $scope.err = null
+    console.log(" logged: " + authData.uid)
+    redirect()
 
   redirect = ->
     $location.path "/account"
@@ -32,7 +28,8 @@ angular.module("<%= scriptAppName %>")
   $scope.oauthLogin = (provider) ->
     $scope.err = null
     auth.$signInWithPopup(provider).then (authData) ->
-    console.log "logged #{authData.uid}", showError
+      console.log "logged #{authData.uid}"
+    .catch showError
     return
 
   $scope.anonymousLogin = ->
@@ -45,12 +42,7 @@ angular.module("<%= scriptAppName %>")
 ## Autenthication with password and email
   $scope.passwordLogin = (email, pass) ->
     $scope.err = null
-    auth.$signInWithEmailAndPassword(
-      email: email
-      password: pass
-    ,
-      rememberMe: true
-    ).then (authData) ->
+    auth.$signInWithEmailAndPassword(email, pass).then (authData) ->
       redirect()
       console.log "logged #{authData.uid}"
     .catch (error) -> showError error

@@ -7,9 +7,8 @@
 # AccountCtrl
 Provides rudimentary account management functions.
 ###
-angular.module("<%= scriptAppName %>").controller "AccountCtrl", ["$scope", "auth", "$timeout", "currentAuth", ($scope, auth, currentAuth <% if(
- hasPasswordProvider ) {
- %>, $timeout<% } %>) ->
+angular.module("<%= scriptAppName %>").controller "AccountCtrl", ["$scope", "auth", "$timeout", "currentAuth", "$location", "loginRedirectPath", <% if(hasPasswordProvider ) { %>, "$timeout" <% } %>, ($scope, auth, currentAuth, $location, loginRedirectPath <% if(hasPasswordProvider ) { %>,
+ $timeout<% } %>) ->
   <% if( hasPasswordProvider ) { %>
 
   error = (err) ->
@@ -49,7 +48,7 @@ angular.module("<%= scriptAppName %>").controller "AccountCtrl", ["$scope", "aut
     ), error
     return
 
-  $scope.logout = -> 
+  $scope.logout = ->
     auth.$signOut()
     $location.path(loginRedirectPath);
 
