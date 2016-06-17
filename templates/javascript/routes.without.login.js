@@ -9,15 +9,12 @@
  */
 angular.module('<%= scriptAppName %>')
 
-  .config(['$routeProvider', function ($routeProvider) {
+  .config(['$routeProvider', function($routeProvider) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
       })
-      .when('/chatCtrl', {
-        templateUrl: 'views/chat.html',
-        controller: 'Chat'
-      })
+
       .otherwise({redirectTo: '/'});
   }]);

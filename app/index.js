@@ -413,6 +413,8 @@ Generator.prototype.askForModules = function askForModules() {
 
     //angularfire
     angMods.push("'firebase'");
+    angMods.push("'firebase.config'");
+    angMods.push("'firebase.ref'");
     if (this.loginModule) {
       this.env.options.loginModule = true;
       angMods.push("'firebase.auth'");

@@ -7,15 +7,12 @@
  * Provides rudimentary account management functions.
  */
 angular.module('<%= scriptAppName %>')
-  .controller('AccountCtrl', ["$scope", "auth", "currentAuth", function (
-    $scope,
-    auth,
-    currentAuth
+  .controller('AccountCtrl', ["$scope", "auth", "currentAuth", "$location", "loginRedirectPath" <% if( hasPasswordProvider ) { %>, "$timeout" <% } %>, function ( $scope, auth, currentAuth,  $location, loginRedirectPath
   <% if( hasPasswordProvider ) { %>, $timeout <% } %>
   ) {
 
-  $scope.user = currentAuth;
-  $scope.messages = [];
+    $scope.user = currentAuth;
+    $scope.messages = [];
 
     <% if( hasPasswordProvider ) { %>
 
@@ -50,6 +47,7 @@ angular.module('<%= scriptAppName %>')
 
     $scope.logout = function() {
       auth.$signOut();
+      $location.path(loginRedirectPath);
     };
 
     function error(err) {

@@ -8,7 +8,16 @@
 Manages authentication to any active providers.
 ###
 angular.module("<%= scriptAppName %>")
-  .controller "LoginCtrl", ["$scope", "auth", "$location", "$firebaseArray", "currentAuth", ($scope, auth, $location, $firebaseArray, currentAuth) ->
+  .controller "LoginCtrl", ["$scope", "auth", "$location", "$firebaseArray", "currentAuth", "Ref", ($scope, auth, $location, $firebaseArray, currentAuth, Ref) ->
+
+  auth.$onAuthStateChanged (authData) ->
+    if (authData) {
+      $scope.err = null
+      console.log(" logged: " + authData.uid)
+      redirect()
+    }
+    return
+
 
   redirect = ->
     $location.path "/account"
@@ -59,7 +68,7 @@ angular.module("<%= scriptAppName %>")
   $scope.createAccount = (email, pass, confirm) ->
 
     createProfile (uid, email) ->
-      query = rootRef.child('users');
+      query = Ref.child('users');
       userObj = $firebaseArray(query);
       userObj.$add({
         email: email,

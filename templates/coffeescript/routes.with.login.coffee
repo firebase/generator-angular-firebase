@@ -66,9 +66,7 @@ angular.module("<%= scriptAppName %>")
     .when("/",
       templateUrl: "views/main.html"
       controller: "MainCtrl",
-      resolve: {
-        "currentAuth": ["auth", (auth) -> auth.$waitForSignIn()]
-      }
+
     )
     .when("/about",
       templateUrl: "views/about.html"

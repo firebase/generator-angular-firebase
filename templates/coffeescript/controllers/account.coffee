@@ -22,15 +22,11 @@ angular.module("<%= scriptAppName %>").controller "AccountCtrl", ["$scope", "aut
 
   <% } %>
 
-  $scope.user =
-    uid: currentAuth.uid,
-    name: currentAuth.displayName,
-    photo: currentAuth.photoURL,
-    email: currentAuth.email
-
-  $scope.authInfo = currentAuth;
+  $scope.user = currentAuth;
+  $scope.messages = [];
 
   <% if( hasPasswordProvider ) { %>
+  $scope.authInfo = currentAuth;
   $scope.changePassword = (oldPass, newPass, confirm) ->
     $scope.err = null
 
@@ -53,15 +49,9 @@ angular.module("<%= scriptAppName %>").controller "AccountCtrl", ["$scope", "aut
     ), error
     return
 
-  $scope.updateProfile = (name, imgUrl) ->
-    firebase.auth().currentUser.updateProfile({
-      displayName: name,
-      photoURL: imgUrl
-    })
-    .then ( -> console.log "updated" ), error
-
-
-  $scope.logout = -> auth.$signOut()
+  $scope.logout = -> 
+    auth.$signOut()
+    $location.path(loginRedirectPath);
 
   <% } %>
   return

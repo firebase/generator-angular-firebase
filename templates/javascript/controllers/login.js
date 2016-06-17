@@ -25,9 +25,7 @@ angular.module('<%= scriptAppName %>')
           .then(function (authData) {
             console.log("logged");
           })
-          .catch(function (error) {
-            showError(error);
-          })
+          .catch(showError)
       };
 
       // Anonymous login method
@@ -36,9 +34,7 @@ angular.module('<%= scriptAppName %>')
           .then(function (authData) {
             console.log("logged ", authData.uid);
           })
-          .catch(function (error) {
-            console.log("login error ", error);
-          })
+          .catch(showError)
       };
 
     <% } %>
@@ -52,9 +48,7 @@ angular.module('<%= scriptAppName %>')
           .then(function (authData) {
             console.log("logged");
           })
-          .catch(function (error) {
-            showError(error);
-          });
+          .catch(showError);
       };
 
       $scope.createAccount = function (email, pass, confirm) {
