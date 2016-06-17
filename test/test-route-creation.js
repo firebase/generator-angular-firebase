@@ -66,7 +66,7 @@ describe('Angular generator route', function () {
       angular.run({}, function(e) {
         helpers.assertFile(expected);
         helpers.assertFileContent(
-          'app/scripts/app.js',
+          'app/scripts/routes.js',
           new RegExp('when\\(\'/' + route + '\'')
         );
 
@@ -82,7 +82,7 @@ describe('Angular generator route', function () {
       angular.run({}, function() {
         helpers.assertFile(expected);
         helpers.assertFileContent(
-          'app/scripts/app.js',
+          'app/scripts/routes.js',
           new RegExp('when\\(\'/' + uri + '\'')
         );
 

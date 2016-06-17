@@ -7,46 +7,56 @@
  * Provides rudimentary account management functions.
  */
 angular.module('<%= scriptAppName %>')
-  .controller('AccountCtrl', function ($scope, user, Auth, Ref, $firebaseObject<% if( hasPasswordProvider ) { %>, $timeout<% } %>) {
-    $scope.user = user;
-    $scope.logout = function() { Auth.$unauth(); };
+  .controller('AccountCtrl', ["$scope", "auth", "currentAuth", "$location", "loginRedirectPath" <% if( hasPasswordProvider ) { %>, "$timeout" <% } %>, function ( $scope, auth, currentAuth,  $location, loginRedirectPath
+  <% if( hasPasswordProvider ) { %>, $timeout <% } %>
+  ) {
+
+    $scope.user = currentAuth;
     $scope.messages = [];
-    var profile = $firebaseObject(Ref.child('users').child(user.uid));
-    profile.$bindTo($scope, 'profile');
+
     <% if( hasPasswordProvider ) { %>
 
+    $scope.authInfo = currentAuth;
     $scope.changePassword = function(oldPass, newPass, confirm) {
       $scope.err = null;
+
       if( !oldPass || !newPass ) {
         error('Please enter all fields');
-      }
-      else if( newPass !== confirm ) {
+
+      } else if( newPass !== confirm ) {
         error('Passwords do not match');
-      }
-      else {
-        Auth.$changePassword({email: profile.email, oldPassword: oldPass, newPassword: newPass})
-          .then(function() {
-            success('Password changed');
-          }, error);
+
+      } else {
+        // New Method
+        auth.$updatePassword(newPass).then(function() {
+          console.log('Password changed');
+          success('Password changed');
+        }, error);
+
       }
     };
 
-    $scope.changeEmail = function(pass, newEmail) {
-      $scope.err = null;
-      Auth.$changeEmail({password: pass, newEmail: newEmail, oldEmail: profile.email})
-        .then(function() {
-          profile.email = newEmail;
-          profile.$save();
-          success('Email changed');
+    $scope.changeEmail = function (newEmail) {
+      auth.$updateEmail(newEmail)
+        .then(function () {
+          console.log("email changed successfully");
+          success("Email changed ");
         })
-        .catch(error);
+        .catch(error)
+    };
+
+    $scope.logout = function() {
+      auth.$signOut();
+      $location.path(loginRedirectPath);
     };
 
     function error(err) {
-      alert(err, 'danger');
+      $scope.err = err;
+      console.log("Error: ", err);
     }
 
     function success(msg) {
+      $scope.msg = msg;
       alert(msg, 'success');
     }
 
@@ -58,4 +68,4 @@ angular.module('<%= scriptAppName %>')
       }, 10000);
     }<% } %>
 
-  });
+  }]);

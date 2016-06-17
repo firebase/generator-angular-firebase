@@ -1,5 +1,6 @@
 Description:
     Creates a new AngularJS route
+    Docs: https://docs.angularjs.org/api/ngRoute
 
 Example:
     yo angularfire:route thing [--coffee] [--uri=path_to/thing] [--auth-required]

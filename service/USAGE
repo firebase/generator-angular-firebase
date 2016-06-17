@@ -1,6 +1,6 @@
 Description:
     Creates a new AngularJS service.
-    Docs: http://docs.angularjs.org/guide/dev_guide.services.creating_services
+    Docs: https://docs.angularjs.org/guide/services
 
 Example:
     yo angularfire:service thing [--coffee]

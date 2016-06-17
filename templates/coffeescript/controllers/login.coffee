@@ -7,33 +7,45 @@
 # LoginCtrl
 Manages authentication to any active providers.
 ###
-angular.module("<%= scriptAppName %>").controller "LoginCtrl", ($scope, Auth, $location<% if( hasPasswordProvider ) { %>, $q, Ref, $timeout<% } %>) ->
+angular.module("<%= scriptAppName %>")
+  .controller "LoginCtrl", ["$scope", "auth", "$location", "$firebaseArray", "currentAuth", "Ref", ($scope, auth, $location, $firebaseArray, currentAuth, Ref) ->
+
+  auth.$onAuthStateChanged (authData) -> if authData
+    $scope.err = null
+    console.log(" logged: " + authData.uid)
+    redirect()
+
   redirect = ->
     $location.path "/account"
     return
   showError = (err) ->
     $scope.err = err
+    console.log err
     return
 
-  <% if( hasOauthProviders ) { %>$scope.oauthLogin = (provider) ->
+  <% if( hasOauthProviders ) { %>
+
+  $scope.oauthLogin = (provider) ->
     $scope.err = null
-    Auth.$authWithOAuthPopup(provider,
-      rememberMe: true
-    ).then redirect, showError
+    auth.$signInWithPopup(provider).then (authData) ->
+      console.log "logged #{authData.uid}"
+    .catch showError
     return
 
   $scope.anonymousLogin = ->
-    Auth.$authAnonymously(rememberMe: true).then redirect, showError
+    auth.$signInAnonymously().then -> console.log "logged", showError
     return
-  <% } %><% if( hasPasswordProvider ) { %>
+  <% } %>
+
+  <% if( hasPasswordProvider ) { %>
+
+## Autenthication with password and email
   $scope.passwordLogin = (email, pass) ->
     $scope.err = null
-    Auth.$authWithPassword(
-      email: email
-      password: pass
-    ,
-      rememberMe: true
-    ).then redirect, showError
+    auth.$signInWithEmailAndPassword(email, pass).then (authData) ->
+      redirect()
+      console.log "logged #{authData.uid}"
+    .catch (error) -> showError error
     return
 
   firstPartOfEmail = (email) ->
@@ -47,21 +59,14 @@ angular.module("<%= scriptAppName %>").controller "LoginCtrl", ($scope, Auth, $l
 
   $scope.createAccount = (email, pass, confirm) ->
 
-    createProfile = (user) ->
-      ref = Ref.child('users').child(user.uid)
-      def = $q.defer()
-      ref.set {
-        email: email
-        name: firstPartOfEmail(email)
-      }, (err) ->
-        $timeout ->
-          if err
-            def.reject err
-          else
-            def.resolve ref
-          return
-        return
-      def.promise
+    createProfile (uid, email) ->
+      query = Ref.child('users');
+      userObj = $firebaseArray(query);
+      userObj.$add({
+        email: email,
+        name: firstPartOfEmail(email),
+        id: uid
+      }).then (ref) -> console.log "added user with id #{ref.key}"
 
     $scope.err = null
     if !pass
@@ -69,15 +74,9 @@ angular.module("<%= scriptAppName %>").controller "LoginCtrl", ($scope, Auth, $l
     else if pass != confirm
       $scope.err = 'Passwords do not match'
     else
-      Auth.$createUser(
-        email: email
-        password: pass).then(->
-        # authenticate so we have permission to write to Firebase
-        Auth.$authWithPassword {
-          email: email
-          password: pass
-        }, rememberMe: true
-      ).then(createProfile).then redirect, showError
+      auth.$createUserWithEmailAndPassword(email, pass).then ->
+      (createProfile).then redirect, showError
     return
   <% } %>
   return
+]

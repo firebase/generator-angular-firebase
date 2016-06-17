@@ -1,5 +1,6 @@
 Description:
     Creates a new AngularJS filter
+    Docs: https://docs.angularjs.org/guide/filter
 
 Example:
     yo angularfire:filter thing [--coffee]

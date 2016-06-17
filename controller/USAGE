@@ -1,5 +1,6 @@
 Description:
     Creates a new Angular controller
+    Docs: https://docs.angularjs.org/guide/controller
 
 Example:
     yo angularfire:controller Thing [--coffee]

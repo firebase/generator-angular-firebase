@@ -1,10 +1,19 @@
 angular.module('firebase.config', [])
-  .constant('FBURL', 'https://<%= firebaseName %>.firebaseio.com')<%
-    if( loginModule ) {
-  %>
-  .constant('SIMPLE_LOGIN_PROVIDERS', ['<%= _.map(authProviders, function(p) {
-          return p.value;
-        }).join("','") %>'])
+<% if( loginModule ) { %>
+.constant('SIMPLE_LOGIN_PROVIDERS', ['<%= _.map(authProviders, function(p) {
+  return p.value;
+}).join("','") %>'])
 
-  .constant('loginRedirectPath', '/login')<% }
-  %>;
+  .constant('loginRedirectPath', '/login')
+<% } %>
+.run(function() {
+
+  var config = {
+    apiKey: '<%= apiKey %>',
+    authDomain: '<%= authDomain %>',
+    databaseURL: 'https://<%= databaseURL %>.firebaseio.com',
+    storageBucket: '<%= storageBucket %>'
+  };
+
+  firebase.initializeApp(config);
+});
