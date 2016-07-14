@@ -1,12 +1,12 @@
-# AngularFire generator
+# AngularFire + ExpressJS generator
 
-> Yeoman generator for AngularJS + Firebase (and AngularFire) - lets you quickly set up a project with sensible defaults and best practices.
+> Yeoman generator for AngularJS + Firebase + ExpressJS (and AngularFire) - lets you quickly set up a project with sensible defaults and best practices.
 
 ## Usage
 
 For step-by-step instructions on using Yeoman and this generator to build a TODO AngularJS application from scratch see [this tutorial.](http://yeoman.io/codelab/)
 
-Install `yo`, `grunt`, `bower`, `generator-angularfire` and `generator-karma`:
+Install `yo`, `grunt`, `bower`, `generator-angularfire-express` and `generator-karma`:
 ```
 npm install -g generator-angularfire
 ```
@@ -46,7 +46,7 @@ Sets up a new AngularJS + Firebase app, generating all the boilerplate you need 
 
 Example:
 ```bash
-yo angularfire
+yo angularfire-express
 ```
 
 ### Route
@@ -54,7 +54,7 @@ Generates a controller and view, and configures a route in `app/scripts/app.js` 
 
 Example:
 ```bash
-yo angularfire:route myroute
+yo angularfire-express:route myroute
 ```
 
 Produces `app/scripts/controllers/myroute.js`:
