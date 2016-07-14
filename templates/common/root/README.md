@@ -1,6 +1,6 @@
 # <%= _.slugify(_.humanize(appname)) %>
 
-This project is generated with [yo angular generator](https://github.com/yeoman/generator-angular)
+This project is generated with [yo angularfire-express generator](https://github.com/matheushf/generator-angularfire-express)
 version <%= pkg.version %>.
 
 ## Build & development
