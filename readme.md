@@ -1,6 +1,6 @@
 # AngularFire + ExpressJS generator
 
-> Yeoman generator for AngularJS + Firebase + ExpressJS (and AngularFire), sets a quick boilerplate app with some Firebase (AngularFire) features.
+> Yeoman generator for AngularJS + Firebase SDK 3.0 (and AngularFire) with a minimalist ExpressJS.
 
 ## Usage
 
@@ -42,7 +42,7 @@ Available generators:
 * [angularfire-express:view](#view)
 
 ### App
-Sets up a new AngularJS + Firebase + ExpressJS app, generating all the boilerplate you need to get started. The app generator also optionally installs Firebase authentication and account management, Bootstrap and additional AngularJS modules, such as angular-resource (installed by default).
+Sets up a new AngularJS + Firebase SDK 3.0 + ExpressJS app, generating all the boilerplate you need to get started. The app generator also optionally installs Firebase authentication and account management, Bootstrap and additional AngularJS modules, such as angular-resource (installed by default).
 
 Example:
 ```bash

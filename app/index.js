@@ -74,8 +74,8 @@ var FIREBASE_PROMPTS = [
     message: 'Include Firebase auth and account tools?',
     type: 'confirm'
   }, {
-    type: 'checkbox',
     name: 'providers',
+    type: 'checkbox',
     message: 'Which providers shall I install?',
     choices: afconfig.authProviders,
     when: function (answers) {
@@ -85,6 +85,10 @@ var FIREBASE_PROMPTS = [
       return picks.length > 0 ? true : 'Must pick at least one provider';
     },
     default: ['password']
+  }, {
+    name: 'express',
+    type: 'confirm',
+    message: 'Want to add ExpressJs server? (minimalist)'
   }
 ];
 
@@ -260,6 +264,7 @@ Generator.prototype.askFirebaseQuestions = function askForCompass() {
   this.storageBucket = null;
   this.loginModule = false;
   this.authProviders = [];
+  this.express = false;
   this.hasOauthProviders = false;
   this.hasPasswordProvider = false;
 
@@ -419,6 +424,10 @@ Generator.prototype.askForModules = function askForModules() {
       angMods.push("'firebase.auth'");
     }
 
+    if (this.express) {
+      this.env.options.express = true;
+    }
+
     if (angMods.length) {
       this.env.options.angularDeps = '\n    ' + angMods.join(',\n    ') + '\n  ';
     }
@@ -463,6 +472,10 @@ Generator.prototype.copyAngularFireFiles = function () {
     var withOrWithout = this.loginModule ? 'with' : 'without';
     this._tpl('routes.' + withOrWithout + '.login', 'routes');
   }
+
+  if (this.express) {
+    this._tpl('')
+  }
 };
 
 Generator.prototype.appJs = function appJs() {
@@ -489,6 +502,11 @@ Generator.prototype.packageFiles = function packageFiles() {
   this.template('root/_package.json', 'package.json');
   this.template('root/_Gruntfile.js', 'Gruntfile.js');
   this.template('root/README.md', 'README.md');
+  
+  if (this.express) {
+    this.template('root/')
+  }
+  
 };
 
 Generator.prototype._injectDependencies = function _injectDependencies() {

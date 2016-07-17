@@ -76,6 +76,17 @@ module.exports = function (grunt) {
       }
     },
 
+    <? if (express) { ?>
+    express: {
+      options: {},
+      dev: {
+        options: {
+          script: 'server/app.js'
+        }
+      }
+    },
+    <? } else { ?>
+
     // The actual grunt server settings
     connect: {
       options: {
@@ -126,6 +137,7 @@ module.exports = function (grunt) {
         }
       }
     },
+    <? } ?>
 
     // Make sure code styles are up to par and there are no obvious mistakes
     jshint: {
@@ -499,7 +511,11 @@ module.exports = function (grunt) {
       'wiredep',
       'concurrent:server',
       'autoprefixer:server',
+      <? if (express) { ?>
+      'express:dev',
+      <? } else { ?>
       'connect:livereload',
+      <? } ?>
       'watch'
     ]);
   });
