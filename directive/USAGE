@@ -3,7 +3,7 @@ Description:
     Docs: https://docs.angularjs.org/guide/directive
 
 Example:
-    yo angularfire:directive thing [--coffee]
+    yo angularfire-express:directive thing [--coffee]
 
     This will create:
         app/scripts/directives/thing.js

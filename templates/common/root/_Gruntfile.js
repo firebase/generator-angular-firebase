@@ -28,7 +28,16 @@ module.exports = function (grunt) {
     yeoman: appConfig,
 
     // Watches files for changes and runs tasks based on the changed files
-    watch: {
+    watch: {<% if (express) { %>
+      express: {
+        files:  [ 'server/**/*.js' ],
+          tasks:  [ 'express' ],
+          options: {
+          livereload: true,
+            spawn: false
+        }
+      },
+      <% } %>
       bower: {
         files: ['bower.json'],
         tasks: ['wiredep']
@@ -76,16 +85,20 @@ module.exports = function (grunt) {
       }
     },
 
-    <? if (express) { ?>
+    <% if (express) { %>
     express: {
-      options: {},
+      options: {
+        script: 'server/app.js',
+          port: 3000
+      },
+      defaults: {}
+    },
+    open: {
       dev: {
-        options: {
-          script: 'server/app.js'
-        }
+        path: 'http://localhost:3000/'
       }
     },
-    <? } else { ?>
+    <% } else { %>
 
     // The actual grunt server settings
     connect: {
@@ -137,7 +150,7 @@ module.exports = function (grunt) {
         }
       }
     },
-    <? } ?>
+    <% } %>
 
     // Make sure code styles are up to par and there are no obvious mistakes
     jshint: {
@@ -491,10 +504,10 @@ module.exports = function (grunt) {
     // Test settings
     karma: {
       unit: {
-        configFile: 'test/karma.conf.<% if (coffee) {
-          %>coffee<% } else {
-          %>js<% }
-          %>',
+        configFile: 'test/karma.conf.'<% if (coffee) {
+          %>'coffee'<% } else {
+          %>'js'<% }
+          %>,
         singleRun: true
       }
     }
@@ -510,12 +523,10 @@ module.exports = function (grunt) {
       'clean:server',
       'wiredep',
       'concurrent:server',
-      'autoprefixer:server',
-      <? if (express) { ?>
-      'express:dev',
-      <? } else { ?>
-      'connect:livereload',
-      <? } ?>
+      'autoprefixer:server',<% if (express) { %>
+      'express',
+      'open',<% } else { %>
+      'connect:livereload',<% } %>
       'watch'
     ]);
   });

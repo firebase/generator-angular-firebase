@@ -1,5 +1,5 @@
 'use strict';
-var fs = require('fs');
+var fs = require('fs-extra');
 var path = require('path');
 var util = require('util');
 var yeoman = require('yeoman-generator');
@@ -28,16 +28,16 @@ var FIREBASE_PROMPTS = [
     required: true,
     validate: function (input) {
       if (!input) {
-       return false;
-       }
-       if (input.match('firebaseio.com')) {
-       return chalk.red("It's not your Database, it's your Authentication Domain. ");
-       }
-       // if (!input.match(/^[a-z0-9]([a-z0-9-]*[a-z0-9]*[\.])?$/)) {
-       if (!input.match(/^[a-z0-9]([a-z0-9-]*[a-z0-9]*[.])*([a-z]*[.]*[a-z])?/)) {
-       return chalk.red('Your Authentication Domain may only contain [a-z], [0-9], hyphen (-) and a dot(.). ' +
-       'It may not start or end with a hyphen or dot.');
-       }
+        return false;
+      }
+      if (input.match('firebaseio.com')) {
+        return chalk.red("It's not your Database, it's your Authentication Domain. ");
+      }
+      // if (!input.match(/^[a-z0-9]([a-z0-9-]*[a-z0-9]*[\.])?$/)) {
+      if (!input.match(/^[a-z0-9]([a-z0-9-]*[a-z0-9]*[.])*([a-z]*[.]*[a-z])?/)) {
+        return chalk.red('Your Authentication Domain may only contain [a-z], [0-9], hyphen (-) and a dot(.). ' +
+          'It may not start or end with a hyphen or dot.');
+      }
       return true;
     }
   }, {
@@ -49,8 +49,8 @@ var FIREBASE_PROMPTS = [
         return false;
       }
       if (input.match(/http/) || input.match(/.firebaseio.com/)) {
-          var msg = chalk.red('Just include the name of your database, not the entire URL.\n\n');
-          msg = msg + chalk.yellow('https://<< NAME HERE >>.firebaseio.com');
+        var msg = chalk.red('Just include the name of your database, not the entire URL.\n\n');
+        msg = msg + chalk.yellow('https://<< NAME HERE >>.firebaseio.com');
         return msg;
       }
       if (!input.match(/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/)) {
@@ -151,15 +151,15 @@ var Generator = module.exports = function Generator(args, options) {
   // }
 
 
-  this.hookFor('angularfire:common', {
+  this.hookFor('angularfire-express:common', {
     args: args
   });
 
-  this.hookFor('angularfire:main', {
+  this.hookFor('angularfire-express:main', {
     args: args
   });
 
-  this.hookFor('angularfire:controller', {
+  this.hookFor('angularfire-express:controller', {
     args: args
   });
 
@@ -183,21 +183,21 @@ var Generator = module.exports = function Generator(args, options) {
       appFiles.push('app/scripts/directives/ngShowAuth.js');
     }
 
-    this.invoke('karma:app', {
-      options: {
-        'skip-install': this.options['skip-install'],
-        'base-path': '../',
-        'coffee': this.options.coffee,
-        'travis': true,
-        'files-comments': bowerComments.join(','),
-        'app-files': appFiles.join(','), //angularfire
-        'test-files': [
-          'test/mock/**/*.' + jsExt,
-          'test/spec/**/*.' + jsExt
-        ].join(','),
-        'bower-components-path': 'bower_components'
-      }
-    });
+    /*this.invoke('karma:app', {
+     options: {
+     'skip-install': this.options['skip-install'],
+     'base-path': '../',
+     'coffee': this.options.coffee,
+     'travis': true,
+     'files-comments': bowerComments.join(','),
+     'app-files': appFiles.join(','), //angularfire
+     'test-files': [
+     'test/mock/!**!/!*.' + jsExt,
+     'test/spec/!**!/!*.' + jsExt
+     ].join(','),
+     'bower-components-path': 'bower_components'
+     }
+     });*/
 
     this.installDependencies({
       skipInstall: this.options['skip-install'],
@@ -207,25 +207,25 @@ var Generator = module.exports = function Generator(args, options) {
 
     //angularfire
     /*
-    * Commented, routes are created manually to set proper configurations
-    if (this.env.options.ngRoute) {
-      this.invoke('angularfire:route', {
-        args: ['chat'],
-        options: {skipController: true, skipView: true, authRequired: false}
-      });
+     * Commented, routes are created manually to set proper configurations
+     if (this.env.options.ngRoute) {
+     this.invoke('angularfire-express:route', {
+     args: ['chat'],
+     options: {skipController: true, skipView: true, authRequired: false}
+     });
 
-      if (this.env.options.loginModule) {
-        this.invoke('angularfire:route', {
-          args: ['login'],
-          options: {skipController: true, skipView: true, authRequired: false}
-        });
+     if (this.env.options.loginModule) {
+     this.invoke('angularfire-express:route', {
+     args: ['login'],
+     options: {skipController: true, skipView: true, authRequired: false}
+     });
 
-        this.invoke('angularfire:route', {
-          args: ['account'],
-          options: {skipController: true, skipView: true, authRequired: true}
-        });
-      }
-    }*/
+     this.invoke('angularfire-express:route', {
+     args: ['account'],
+     options: {skipController: true, skipView: true, authRequired: true}
+     });
+     }
+     }*/
 
     //angularfire
   });
@@ -472,13 +472,14 @@ Generator.prototype.copyAngularFireFiles = function () {
     var withOrWithout = this.loginModule ? 'with' : 'without';
     this._tpl('routes.' + withOrWithout + '.login', 'routes');
   }
-
-  if (this.express) {
-    this._tpl('')
-  }
 };
 
 Generator.prototype.appJs = function appJs() {
+
+  if (this.express) {
+    var expressSrc = ['']
+  }
+
   this.indexFile = this.appendFiles({
     html: this.indexFile,
     fileType: 'js',
@@ -502,11 +503,14 @@ Generator.prototype.packageFiles = function packageFiles() {
   this.template('root/_package.json', 'package.json');
   this.template('root/_Gruntfile.js', 'Gruntfile.js');
   this.template('root/README.md', 'README.md');
-  
+
   if (this.express) {
-    this.template('root/')
+    fs.copy(
+      path.join(__dirname, '../templates/common/root/server/**/*'),
+      this.destinationRoot()
+    );
   }
-  
+
 };
 
 Generator.prototype._injectDependencies = function _injectDependencies() {

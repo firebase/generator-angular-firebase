@@ -29,10 +29,10 @@ var Generator = module.exports = function Generator(name) {
   }
 
   if( !this.options.skipController ) {
-    this.hookFor('angularfire:controller');
+    this.hookFor('angularfire-express:controller');
   }
   if( !this.options.skipView ) {
-    this.hookFor('angularfire:view');
+    this.hookFor('angularfire-express:view');
   }
 };
 

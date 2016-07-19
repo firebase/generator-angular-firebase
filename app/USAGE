@@ -2,7 +2,7 @@ Description:
     Creates a default AngularJS app with Firebase support and some features
 
 Example:
-    yo angularfire [--coffee]
+    yo angularfire-express [--coffee]
 
     This will create:
         Gruntfile.js
