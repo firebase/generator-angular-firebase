@@ -8,7 +8,7 @@ For step-by-step instructions on using Yeoman and this generator to build a TODO
 
 Install `yo`, `grunt`, `bower`, `generator-angularfire-express` and `generator-karma`:
 ```
-npm install -g generator-angularfire
+npm install -g generator-angularfire-express
 ```
 
 Make a new directory, and `cd` into it:
