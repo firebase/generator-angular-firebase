@@ -476,9 +476,6 @@ Generator.prototype.copyAngularFireFiles = function () {
 
 Generator.prototype.appJs = function appJs() {
 
-  if (this.express) {
-    var expressSrc = ['']
-  }
 
   this.indexFile = this.appendFiles({
     html: this.indexFile,
@@ -505,10 +502,10 @@ Generator.prototype.packageFiles = function packageFiles() {
   this.template('root/README.md', 'README.md');
 
   if (this.express) {
-    fs.copy(
-      path.join(__dirname, '../templates/common/root/server/**/*'),
-      this.destinationRoot()
-    );
+    // Express files
+    var src = this.sourceRoot().toString() + '/root/express/';
+    var dest = this.options.env.cwd.toString() + '/';
+    fs.copy(src, dest);
   }
 
 };

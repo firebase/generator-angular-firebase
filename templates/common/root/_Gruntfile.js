@@ -54,7 +54,7 @@ module.exports = function (grunt) {
         files: ['<%%= yeoman.app %>/scripts/{,*/}*.js'],
         tasks: ['newer:jshint:all'],
         options: {
-          livereload: '<%%= connect.options.livereload %>'
+          livereload: 35729
         }
       },
       jsTest: {
@@ -74,7 +74,7 @@ module.exports = function (grunt) {
       },
       livereload: {
         options: {
-          livereload: '<%%= connect.options.livereload %>'
+          livereload: 35729
         },
         files: [
           '<%%= yeoman.app %>/{,*/}*.html',
@@ -84,7 +84,6 @@ module.exports = function (grunt) {
         ]
       }
     },
-
     <% if (express) { %>
     express: {
       options: {
@@ -99,7 +98,6 @@ module.exports = function (grunt) {
       }
     },
     <% } else { %>
-
     // The actual grunt server settings
     connect: {
       options: {
@@ -504,17 +502,14 @@ module.exports = function (grunt) {
     // Test settings
     karma: {
       unit: {
-        configFile: 'test/karma.conf.'<% if (coffee) {
-          %>'coffee'<% } else {
-          %>'js'<% }
-          %>,
+        configFile: 'test/karma.conf.<% if (coffee) { %>coffee'<% } else { %>js'<% }%>,
         singleRun: true
       }
     }
   });
 
 
-  grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
+  grunt.registerTask('serve', 'Compile then start a connect/express web server', function (target) {
     if (target === 'dist') {
       return grunt.task.run(['build', 'connect:dist:keepalive']);
     }
