@@ -12,13 +12,13 @@ var Generator = module.exports = function Generator() {
 
   try {
     bowerJson = require(path.join(process.cwd(), 'bower.json'));
-  } catch (e) {}
-
-  if (bowerJson.name) {
-    this.appname = bowerJson.name;
-  } else {
-    this.appname = path.basename(process.cwd());
+  } catch (e) {
   }
+
+  if (bowerJson.name)
+    this.appname = bowerJson.name;
+  else
+    this.appname = path.basename(process.cwd());
 
   this.appname = this._.slugify(this._.humanize(this.appname));
 
