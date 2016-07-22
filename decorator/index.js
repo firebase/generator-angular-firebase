@@ -1,6 +1,6 @@
 'use strict';
 var util = require('util');
-var ScriptBase = require('../script-base.js');
+var ScriptBase = require('../script-base2.js');
 var fs = require('fs');
 var path = require('path');
 
