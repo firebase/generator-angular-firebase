@@ -31,6 +31,8 @@
     "templates",
     "value",
     "view",
+    "base",
+    "script-base.js",
     "script-base2.js",
     "util.js",
     "angularfire"
