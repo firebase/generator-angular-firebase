@@ -2,7 +2,7 @@ Description:
     Creates a new AngularJS view
 
 Example:
-    yo angularfire:view thing
+    yo angularfire-express:view thing
 
     This will create:
         app/views/thing.html

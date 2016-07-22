@@ -28,7 +28,16 @@ module.exports = function (grunt) {
     yeoman: appConfig,
 
     // Watches files for changes and runs tasks based on the changed files
-    watch: {
+    watch: {<% if (express) { %>
+      express: {
+        files:  [ 'server/**/*.js' ],
+          tasks:  [ 'express' ],
+          options: {
+          livereload: true,
+            spawn: false
+        }
+      },
+      <% } %>
       bower: {
         files: ['bower.json'],
         tasks: ['wiredep']
@@ -45,7 +54,7 @@ module.exports = function (grunt) {
         files: ['<%%= yeoman.app %>/scripts/{,*/}*.js'],
         tasks: ['newer:jshint:all'],
         options: {
-          livereload: '<%%= connect.options.livereload %>'
+          livereload: 35729
         }
       },
       jsTest: {
@@ -65,7 +74,7 @@ module.exports = function (grunt) {
       },
       livereload: {
         options: {
-          livereload: '<%%= connect.options.livereload %>'
+          livereload: 35729
         },
         files: [
           '<%%= yeoman.app %>/{,*/}*.html',
@@ -75,7 +84,20 @@ module.exports = function (grunt) {
         ]
       }
     },
-
+    <% if (express) { %>
+    express: {
+      options: {
+        script: 'server/app.js',
+          port: 3000
+      },
+      defaults: {}
+    },
+    open: {
+      dev: {
+        path: 'http://localhost:3000/'
+      }
+    },
+    <% } else { %>
     // The actual grunt server settings
     connect: {
       options: {
@@ -126,6 +148,7 @@ module.exports = function (grunt) {
         }
       }
     },
+    <% } %>
 
     // Make sure code styles are up to par and there are no obvious mistakes
     jshint: {
@@ -190,9 +213,6 @@ module.exports = function (grunt) {
 
     // Automatically inject Bower components into the app
     wiredep: {
-      options: {
-        cwd: ''
-      },
       app: {
         src: ['<%%= yeoman.app %>/index.html'],
         ignorePath:  /\.\.\//
@@ -482,17 +502,14 @@ module.exports = function (grunt) {
     // Test settings
     karma: {
       unit: {
-        configFile: 'test/karma.conf.<% if (coffee) {
-          %>coffee<% } else {
-          %>js<% }
-          %>',
+        configFile: 'test/karma.conf.<% if (coffee) { %>coffee'<% } else { %>js'<% }%>,
         singleRun: true
       }
     }
   });
 
 
-  grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
+  grunt.registerTask('serve', 'Compile then start a connect/express web server', function (target) {
     if (target === 'dist') {
       return grunt.task.run(['build', 'connect:dist:keepalive']);
     }
@@ -501,8 +518,10 @@ module.exports = function (grunt) {
       'clean:server',
       'wiredep',
       'concurrent:server',
-      'autoprefixer:server',
-      'connect:livereload',
+      'autoprefixer:server',<% if (express) { %>
+      'express',
+      'open',<% } else { %>
+      'connect:livereload',<% } %>
       'watch'
     ]);
   });

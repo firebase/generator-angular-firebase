@@ -1,8 +1,9 @@
 Description:
     Creates a new AngularJS route
+    Docs: https://docs.angularjs.org/api/ngRoute
 
 Example:
-    yo angularfire:route thing [--coffee] [--uri=path_to/thing] [--auth-required]
+    yo angularfire-express:route thing [--coffee] [--uri=path_to/thing] [--auth-required]
 
     This will create:
         app/scripts/controllers/thing.js

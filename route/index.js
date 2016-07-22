@@ -2,7 +2,7 @@
 var path = require('path');
 var chalk = require('chalk');
 var util = require('util');
-var ScriptBase = require('../script-base.js');
+var ScriptBase = require('../script-base2.js');
 var angularUtils = require('../util.js');
 
 
@@ -29,10 +29,10 @@ var Generator = module.exports = function Generator(name) {
   }
 
   if( !this.options.skipController ) {
-    this.hookFor('angularfire:controller');
+    this.hookFor('angularfire-express:controller');
   }
   if( !this.options.skipView ) {
-    this.hookFor('angularfire:view');
+    this.hookFor('angularfire-express:view');
   }
 };
 

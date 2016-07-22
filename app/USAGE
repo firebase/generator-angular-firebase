@@ -1,19 +1,40 @@
 Description:
-    Creates a default AngularJS app
+    Creates a default AngularJS app with Firebase support and some features
 
 Example:
-    yo angular [--coffee]
+    yo angularfire-express [--coffee]
 
     This will create:
         Gruntfile.js
+        package.json
         bower.json
 
         app/index.html
-        app/scripts/your-app-name-here.js
-        app/scripts/controllers/main.js
-        app/bower_components/angular/angular.js
-        app/styles/main.css
+        app/.htaccess
+
+        app/views/account.html
+        app/views/chat.html
+        app/views/login.html
         app/views/main.html
 
-        test/lib/angular-mocks.js
+        app/scripts/angularfire/auth.js
+        app/scripts/angularfire/config.js
+        app/scripts/angularfire/firebase.ref.js
+        app/scripts/controllers/account.js
+        app/scripts/controllers/chat.js
+        app/scripts/controllers/login.js
+        app/scripts/controllers/main.js
+        app/scripts/directives/ngHideAuth.js
+        app/scripts/filters/reverse.js
+        app/scripts/app.js
+        app/scripts/routes.js
+
+        app/styles/main.scss
+
+        app/bower_components/angular/angular.js
+        app/bower_components/firebase/firebase.js
+        app/bower_components/angularfire/index.js
+        app/bower_components/angularfire/dist/angularfire.min.js
+
         test/spec/controllers/main.js
+        test/karma.conf.js

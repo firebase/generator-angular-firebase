@@ -7,70 +7,119 @@
  * Manages authentication to any active providers.
  */
 angular.module('<%= scriptAppName %>')
-  .controller('LoginCtrl', function ($scope, Auth, $location<% if( hasPasswordProvider ) { %>, $q, Ref, $timeout<% } %>) {
-    <% if( hasOauthProviders ) { %>$scope.oauthLogin = function(provider) {
-      $scope.err = null;
-      Auth.$authWithOAuthPopup(provider, {rememberMe: true}).then(redirect, showError);
-    };
+  .controller('LoginCtrl', ["$scope", "auth", "$location", function ($scope, auth, $location) {
 
-    $scope.anonymousLogin = function() {
-      $scope.err = null;
-      Auth.$authAnonymously({rememberMe: true}).then(redirect, showError);
-    };
+    $scope.loginBtn = true;
+    $scope.logoutBtn = true;
 
-    <% } %><% if( hasPasswordProvider ) { %>$scope.passwordLogin = function(email, pass) {
-      $scope.err = null;
-      Auth.$authWithPassword({email: email, password: pass}, {rememberMe: true}).then(
-        redirect, showError
-      );
-    };
-
-    $scope.createAccount = function(email, pass, confirm) {
-      $scope.err = null;
-      if( !pass ) {
-        $scope.err = 'Please enter a password';
+    auth.$onAuthStateChanged(function (authData) {
+      if (authData) {
+        console.log(" logged: " + authData.uid);
+        $scope.logoutBtn = true;
+        $scope.loginBtn = false;
+        $location.path('/account');
       }
-      else if( pass !== confirm ) {
-        $scope.err = 'Passwords do not match';
-      }
-      else {
-        Auth.$createUser({email: email, password: pass})
-          .then(function () {
-            // authenticate so we have permission to write to Firebase
-            return Auth.$authWithPassword({email: email, password: pass}, {rememberMe: true});
+    });
+
+    <% if (hasOauthProviders) { %>
+
+      // SignIn with a Provider
+      $scope.oauthLogin = function (provider) {
+        auth.$signInWithPopup(provider)
+          .then(function (authData) {
+            console.log("logged");
+            redirect();
           })
-          .then(createProfile)
-          .then(redirect, showError);
-      }
+          .catch(function (error) {
+            console.log("login error");
+            showError(error);
+          })
+      };
 
-      function createProfile(user) {
-        var ref = Ref.child('users').child(user.uid), def = $q.defer();
-        ref.set({email: email, name: firstPartOfEmail(email)}, function(err) {
-          $timeout(function() {
-            if( err ) {
-              def.reject(err);
-            }
-            else {
-              def.resolve(ref);
-            }
+      // Anonymous login method
+      $scope.anonymousLogin = function () {
+        auth.$signInAnonymously()
+          .then(function (authData) {
+            console.log("logged ", authData.uid);
+          })
+          .catch(function (error) {
+            console.log("login error ", error);
+          })
+      };
+
+    <% } %>
+
+    <% if (hasPasswordProvider) { %>
+
+      // Autenthication with password and email
+      $scope.passwordLogin = function (email, pass) {
+
+        auth.$signInWithEmailAndPassword(email, pass)
+          .then(function (authData) {
+            redirect();
+            console.log("logged");
+          })
+          .catch(function (error) {
+            showError(error);
+            console.log("error: " + error);
           });
-        });
-        return def.promise;
+      };
+
+      $scope.createAccount = function (email, pass, confirm) {
+        $scope.err = null;
+
+        if (!pass) {
+          $scope.err = 'Please enter a password';
+        } else if (pass !== confirm) {
+          $scope.err = 'Passwords do not match';
+        } else {
+          auth.$createUserWithEmailAndPassword(email, pass)
+            .then(function (userData) {
+              console.log("User " + userData.uid + " created successfully");
+              return userData;
+            })
+            .then(function (authData) {
+            console.log("Logged user: ", authData.uid);
+              createProfile();
+              redirect();
+            })
+            .catch(function (error) {
+              console.error("Error: ", error);
+            });
+          }
+        };
+
+        //todo wait till SDK 3.x support comes up to test
+        function createProfile(user) {
+
+          // var query =
+          var userObj = rootRef.child('users').child(user.uid);
+          var def = $q.defer();
+          ref.set({email: email, name: firstPartOfEmail(email)}, function (err) {
+            $timeout(function () {
+              if (err) {
+                def.reject(err);
+              }
+              else {
+                def.resolve(ref);
+              }
+            });
+          });
+          return def.promise;
+        }
+
+      function firstPartOfEmail(email) {
+        return ucfirst(email.substr(0, email.indexOf('@')) || '');
       }
-    };
 
-    function firstPartOfEmail(email) {
-      return ucfirst(email.substr(0, email.indexOf('@'))||'');
-    }
+      function ucfirst(str) {
+        // inspired by: http://kevin.vanzonneveld.net
+        str += '';
+        var f = str.charAt(0).toUpperCase();
+        return f + str.substr(1);
+      }
 
-    function ucfirst (str) {
-      // inspired by: http://kevin.vanzonneveld.net
-      str += '';
-      var f = str.charAt(0).toUpperCase();
-      return f + str.substr(1);
-    }
-
-  <% } %>
+    <% } %>
 
     function redirect() {
       $location.path('/account');
@@ -81,4 +130,4 @@ angular.module('<%= scriptAppName %>')
     }
 
 
-  });
+  }]);

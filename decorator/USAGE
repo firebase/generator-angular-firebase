@@ -1,8 +1,9 @@
 Description:
     Creates a new AngularJS decorator for a specified service
+    Docs: https://docs.angularjs.org/guide/decorators
 
 Example:
-    yo angularfire:decorator serviceName [--coffee]
+    yo angularfire-express:decorator serviceName [--coffee]
 
     This will create:
         app/scripts/decorators/serviceNameDecorator.js

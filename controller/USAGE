@@ -1,8 +1,9 @@
 Description:
     Creates a new Angular controller
+    Docs: https://docs.angularjs.org/guide/controller
 
 Example:
-    yo angularfire:controller Thing [--coffee]
+    yo angularfire-express:controller Thing [--coffee]
 
     This will create:
         app/scripts/controllers/thing-ctrl.js

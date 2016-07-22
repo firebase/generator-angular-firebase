@@ -1,5 +1,5 @@
 'use strict';
-var fs = require('fs');
+var fs = require('fs-extra');
 var path = require('path');
 var util = require('util');
 var yeoman = require('yeoman-generator');
@@ -13,14 +13,45 @@ var afconfig = require('../angularfire/config.json');
 var colors = require('../angularfire/colors.js');
 var FIREBASE_PROMPTS = [
   {
-    name: 'firebaseName',
-    message: colors('Firebase instance ' +
-      '(https://%yellow<your instance>%/yellow.firebaseio.com)'),
+    name: 'apiKey',
+    message: "What's your Api Key? ",
     required: true,
     validate: function (input) {
-      if( !input ) { return false; }
-      if( input.match('http') || input.match('firebaseio.com') ) {
-        return chalk.red('Just include the Firebase name, not the entire URL');
+      if (!input || input.length < 35) {
+        return chalk.red(" It must have more than 35 char.");
+      }
+      return true;
+    }
+  }, {
+    name: 'authDomain',
+    message: "What's your authentication domain? ",
+    required: true,
+    validate: function (input) {
+      if (!input) {
+        return false;
+      }
+      if (input.match('firebaseio.com')) {
+        return chalk.red("It's not your Database, it's your Authentication Domain. ");
+      }
+      // if (!input.match(/^[a-z0-9]([a-z0-9-]*[a-z0-9]*[\.])?$/)) {
+      if (!input.match(/^[a-z0-9]([a-z0-9-]*[a-z0-9]*[.])*([a-z]*[.]*[a-z])?/)) {
+        return chalk.red('Your Authentication Domain may only contain [a-z], [0-9], hyphen (-) and a dot(.). ' +
+          'It may not start or end with a hyphen or dot.');
+      }
+      return true;
+    }
+  }, {
+    name: 'databaseURL',
+    message: colors('Database name: '),
+    required: true,
+    validate: function (input) {
+      if (!input) {
+        return false;
+      }
+      if (input.match(/http/) || input.match(/.firebaseio.com/)) {
+        var msg = chalk.red('Just include the name of your database, not the entire URL.\n\n');
+        msg = msg + chalk.yellow('https://<< NAME HERE >>.firebaseio.com');
+        return msg;
       }
       if (!input.match(/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/)) {
         return chalk.red('Your Firebase name may only contain [a-z], [0-9], and hyphen (-). ' +
@@ -29,27 +60,41 @@ var FIREBASE_PROMPTS = [
       return true;
     }
   }, {
+    name: 'storageBucket',
+    message: colors('Storage Bucket: '),
+    required: true,
+    validate: function (input) {
+      if (!input.match(/.appspot.com/)) {
+        return chalk.red('It must contain "appspot.com" at the end.');
+      }
+      return true;
+    }
+  }, {
     name: 'loginModule',
     message: 'Include Firebase auth and account tools?',
     type: 'confirm'
   }, {
-    type: 'checkbox',
     name: 'providers',
+    type: 'checkbox',
     message: 'Which providers shall I install?',
     choices: afconfig.authProviders,
-    when: function(answers) {
+    when: function (answers) {
       return answers.loginModule;
     },
-    validate: function(picks) {
-      return picks.length > 0? true : 'Must pick at least one provider';
+    validate: function (picks) {
+      return picks.length > 0 ? true : 'Must pick at least one provider';
     },
     default: ['password']
+  }, {
+    name: 'express',
+    type: 'confirm',
+    message: 'Want to add ExpressJs server? (minimalist)'
   }
 ];
 
 var Generator = module.exports = function Generator(args, options) {
   yeoman.generators.Base.apply(this, arguments);
-  this.argument('appname', { type: String, required: false });
+  this.argument('appname', {type: String, required: false});
   this.appname = this.appname || path.basename(process.cwd());
   this.appname = this._.camelize(this._.slugify(this._.humanize(this.appname)));
 
@@ -78,7 +123,8 @@ var Generator = module.exports = function Generator(args, options) {
     if (!this.env.options.appPath) {
       try {
         this.env.options.appPath = require(path.join(process.cwd(), 'bower.json')).appPath;
-      } catch (e) {}
+      } catch (e) {
+      }
     }
     this.env.options.appPath = this.env.options.appPath || 'app';
     this.options.appPath = this.env.options.appPath;
@@ -86,30 +132,34 @@ var Generator = module.exports = function Generator(args, options) {
 
   this.appPath = this.env.options.appPath;
 
-  if (typeof this.env.options.coffee === 'undefined') {
-    this.option('coffee', {
-      desc: 'Generate CoffeeScript instead of JavaScript'
-    });
+  /*
+   * Coffe script not yet done, commented until I update the files
+   */
+  // if (typeof this.env.options.coffee === 'undefined') {
+  //   this.option('coffee', {
+  //     desc: 'Generate CoffeeScript instead of JavaScript'
+  //   });
+  //
+  //   // attempt to detect if user is using CS or not
+  //   // if cml arg provided, use that; else look for the existence of cs
+  //   if (!this.options.coffee &&
+  //     this.expandFiles(path.join(this.appPath, '/scripts/**/*.coffee'), {}).length > 0) {
+  //     this.options.coffee = true;
+  //   }
+  //
+  //   this.env.options.coffee = this.options.coffee;
+  // }
 
-    // attempt to detect if user is using CS or not
-    // if cml arg provided, use that; else look for the existence of cs
-    if (!this.options.coffee &&
-      this.expandFiles(path.join(this.appPath, '/scripts/**/*.coffee'), {}).length > 0) {
-      this.options.coffee = true;
-    }
 
-    this.env.options.coffee = this.options.coffee;
-  }
-
-  this.hookFor('angularfire:common', {
+  this.hookFor('angularfire-express:common', {
     args: args
   });
 
-  this.hookFor('angularfire:main', {
+  this.hookFor('angularfire-express:main', {
     args: args
   });
 
-  this.hookFor('angularfire:controller', {
+  this.hookFor('angularfire-express:controller', {
     args: args
   });
 
@@ -125,29 +175,29 @@ var Generator = module.exports = function Generator(args, options) {
 
     var jsExt = this.options.coffee ? 'coffee' : 'js';
 
-    var appFiles = ['app/scripts/**/*.' + jsExt ];
-    if( this.options.coffee ) {
+    var appFiles = ['app/scripts/**/*.' + jsExt];
+    if (this.options.coffee) {
       //todo add these into coffeescript so we don't need this extra step
-      appFiles.push('app/scripts/angularFire/*.js');
+      // appFiles.push('app/scripts/angularFire/*.js');
       appFiles.push('app/scripts/directives/ngHideAuth.js');
       appFiles.push('app/scripts/directives/ngShowAuth.js');
     }
 
-    this.invoke('karma:app', {
-      options: {
-        'skip-install': this.options['skip-install'],
-        'base-path': '../',
-        'coffee': this.options.coffee,
-        'travis': true,
-        'files-comments': bowerComments.join(','),
-        'app-files': appFiles.join(','), //angularfire
-        'test-files': [
-          'test/mock/**/*.' + jsExt,
-          'test/spec/**/*.' + jsExt
-        ].join(','),
-        'bower-components-path': 'bower_components'
-      }
-    });
+    /*this.invoke('karma:app', {
+     options: {
+     'skip-install': this.options['skip-install'],
+     'base-path': '../',
+     'coffee': this.options.coffee,
+     'travis': true,
+     'files-comments': bowerComments.join(','),
+     'app-files': appFiles.join(','), //angularfire
+     'test-files': [
+     'test/mock/!**!/!*.' + jsExt,
+     'test/spec/!**!/!*.' + jsExt
+     ].join(','),
+     'bower-components-path': 'bower_components'
+     }
+     });*/
 
     this.installDependencies({
       skipInstall: this.options['skip-install'],
@@ -156,24 +206,26 @@ var Generator = module.exports = function Generator(args, options) {
     });
 
     //angularfire
-    if (this.env.options.ngRoute) {
-      this.invoke('angularfire:route', {
-        args: ['chat'],
-        options: { skipController: true, skipView: true, authRequired: false }
-      });
+    /*
+     * Commented, routes are created manually to set proper configurations
+     if (this.env.options.ngRoute) {
+     this.invoke('angularfire-express:route', {
+     args: ['chat'],
+     options: {skipController: true, skipView: true, authRequired: false}
+     });
 
-      if(this.env.options.loginModule) {
-        this.invoke('angularfire:route', {
-          args: ['login'],
-          options: { skipController: true, skipView: true, authRequired: false }
-        });
+     if (this.env.options.loginModule) {
+     this.invoke('angularfire-express:route', {
+     args: ['login'],
+     options: {skipController: true, skipView: true, authRequired: false}
+     });
 
-        this.invoke('angularfire:route', {
-          args: ['account'],
-          options: { skipController: true, skipView: true, authRequired: true }
-        });
-      }
-    }
+     this.invoke('angularfire-express:route', {
+     args: ['account'],
+     options: {skipController: true, skipView: true, authRequired: true}
+     });
+     }
+     }*/
 
     //angularfire
   });
@@ -206,9 +258,13 @@ Generator.prototype.welcome = function welcome() {
 
 //angularfire
 Generator.prototype.askFirebaseQuestions = function askForCompass() {
-  this.firebaseName = null;
+  this.apiKey = null;
+  this.authDomain = null;
+  this.databaseURL = null;
+  this.storageBucket = null;
   this.loginModule = false;
   this.authProviders = [];
+  this.express = false;
   this.hasOauthProviders = false;
   this.hasPasswordProvider = false;
 
@@ -217,8 +273,8 @@ Generator.prototype.askFirebaseQuestions = function askForCompass() {
 
   var cb = this.async();
   this.prompt(FIREBASE_PROMPTS, function (props) {
-    FIREBASE_PROMPTS.forEach(function(prompt) {
-      if( prompt.name === 'providers' && props.loginModule ) {
+    FIREBASE_PROMPTS.forEach(function (prompt) {
+      if (prompt.name === 'providers' && props.loginModule) {
         this._processProviders(props[prompt.name]);
       }
       else {
@@ -276,44 +332,47 @@ Generator.prototype.askForModules = function askForModules() {
     name: 'modules',
     message: 'Which modules would you like to include?',
     choices: [
-    {
-      value: 'animateModule',
-      name: 'angular-animate.js',
-      checked: true
-    }, {
-      value: 'ariaModule',
-      name: 'angular-aria.js',
-      checked: false
-    }, {
-      value: 'cookiesModule',
-      name: 'angular-cookies.js',
-      checked: true
-    }, {
-      value: 'resourceModule',
-      name: 'angular-resource.js',
-      checked: true
-    }, {
-      value: 'messagesModule',
-      name: 'angular-messages.js',
-      checked: false
-    }, {
-      value: 'routeModule',
-      name: 'angular-route.js',
-      checked: true
-    }, {
-      value: 'sanitizeModule',
-      name: 'angular-sanitize.js',
-      checked: true
-    }, {
-      value: 'touchModule',
-      name: 'angular-touch.js',
-      checked: true
-    }
+      {
+        value: 'animateModule',
+        name: 'angular-animate.js',
+        checked: true
+      }, {
+        value: 'ariaModule',
+        name: 'angular-aria.js',
+        checked: false
+      }, {
+        value: 'cookiesModule',
+        name: 'angular-cookies.js',
+        checked: true
+      }, {
+        value: 'resourceModule',
+        name: 'angular-resource.js',
+        checked: true
+      }, {
+        value: 'messagesModule',
+        name: 'angular-messages.js',
+        checked: false
+      }, {
+        value: 'routeModule',
+        name: 'angular-route.js',
+        checked: true
+      },
+      {
+        value: 'sanitizeModule',
+        name: 'angular-sanitize.js',
+        checked: true
+      }, {
+        value: 'touchModule',
+        name: 'angular-touch.js',
+        checked: true
+      }
     ]
   }];
 
   this.prompt(prompts, function (props) {
-    var hasMod = function (mod) { return props.modules.indexOf(mod) !== -1; };
+    var hasMod = function (mod) {
+      return props.modules.indexOf(mod) !== -1;
+    };
     this.animateModule = hasMod('animateModule');
     this.ariaModule = hasMod('ariaModule');
     this.cookiesModule = hasMod('cookiesModule');
@@ -360,10 +419,13 @@ Generator.prototype.askForModules = function askForModules() {
 
     //angularfire
     angMods.push("'firebase'");
-    angMods.push("'firebase.ref'");
-    if( this.loginModule ) {
+    if (this.loginModule) {
       this.env.options.loginModule = true;
       angMods.push("'firebase.auth'");
+    }
+
+    if (this.express) {
+      this.env.options.express = true;
     }
 
     if (angMods.length) {
@@ -389,14 +451,14 @@ Generator.prototype.bootstrapFiles = function bootstrapFiles() {
 
 //todo make this its own subgenerator separate from Angular.js gen
 //angularfire
-Generator.prototype.copyAngularFireFiles = function() {
-  this._common('scripts/angularfire/config.js');
-  this._common('scripts/angularfire/firebase.ref.js');
+Generator.prototype.copyAngularFireFiles = function () {
+  // this._common('scripts/angularfire/config.js');
+  // this._common('scripts/angularfire/firebase.ref.js');
   this._tpl('controllers/chat');
   this._htmlTpl('views/chat.html');
   this._tpl('filters/reverse');
 
-  if( this.loginModule ) {
+  if (this.loginModule) {
     this._common('scripts/angularfire/auth.js');
     this._tpl('controllers/login');
     this._tpl('controllers/account');
@@ -406,19 +468,21 @@ Generator.prototype.copyAngularFireFiles = function() {
     this._common('scripts/directives/ngHideAuth.js');
   }
 
-  if( this.routeModule ) {
-    var withOrWithout = this.loginModule? 'with' : 'without';
+  if (this.routeModule) {
+    var withOrWithout = this.loginModule ? 'with' : 'without';
     this._tpl('routes.' + withOrWithout + '.login', 'routes');
   }
 };
 
 Generator.prototype.appJs = function appJs() {
+
+
   this.indexFile = this.appendFiles({
     html: this.indexFile,
     fileType: 'js',
     optimizedPath: 'scripts/scripts.js',
     sourceFileList: ['scripts/app.js', 'scripts/controllers/main.js']
-      //angularfire
+    //angularfire
       .concat(this.angularFireSourceFiles),
     searchPath: ['.tmp', this.appPath]
   });
@@ -436,6 +500,14 @@ Generator.prototype.packageFiles = function packageFiles() {
   this.template('root/_package.json', 'package.json');
   this.template('root/_Gruntfile.js', 'Gruntfile.js');
   this.template('root/README.md', 'README.md');
+
+  if (this.express) {
+    // Express files
+    var src = this.sourceRoot().toString() + '/root/express/';
+    var dest = this.options.env.cwd.toString() + '/';
+    fs.copy(src, dest);
+  }
+
 };
 
 Generator.prototype._injectDependencies = function _injectDependencies() {
@@ -452,51 +524,57 @@ Generator.prototype._injectDependencies = function _injectDependencies() {
 };
 
 //angularfire
-Generator.prototype._common = function(dest) {
+Generator.prototype._common = function (dest) {
   this.angularFireSourceFiles.push(dest);
   var appPath = this.options.appPath;
   this.template(path.join('app', dest), path.join(appPath, dest));
 };
 
 //angularfire
-Generator.prototype._htmlTpl = function(dest) {
+Generator.prototype._htmlTpl = function (dest) {
   var join = path.join;
   var appPath = this.options.appPath;
   this.template(join('app', dest), join(appPath, dest));
 };
 
 //angularfire
-Generator.prototype._tpl = function(src, dest) {
-  if( !dest ) { dest = src; }
-  var suff = this.options.coffee? '.coffee' : '.js';
-  var destFileName = path.join('scripts', dest+suff);
-  this.angularFireSourceFiles.push(path.join('scripts', dest+'.js'));
+Generator.prototype._tpl = function (src, dest) {
+  if (!dest) {
+    dest = src;
+  }
+  var suff = this.options.coffee ? '.coffee' : '.js';
+  var destFileName = path.join('scripts', dest + suff);
+  this.angularFireSourceFiles.push(path.join('scripts', dest + '.js'));
   this.template(
     // haaaaaack
-    path.join('..', this.options.coffee? 'coffeescript' : 'javascript', src+suff),
+    path.join('..', this.options.coffee ? 'coffeescript' : 'javascript', src + suff),
     path.join(this.appPath, destFileName)
   );
 };
 
 //angularfire
-Generator.prototype._processProviders = function(list) {
+Generator.prototype._processProviders = function (list) {
   var providerMap = {}, i = afconfig.authProviders.length, p;
-  while(i--) {
+  while (i--) {
     p = afconfig.authProviders[i];
     providerMap[p.value] = {name: p.name, value: p.value};
   }
-  list.forEach(function(p) {
-    if( p === 'password' ) { this.hasPasswordProvider = true; }
-    else { this.hasOauthProviders = true; }
+  list.forEach(function (p) {
+    if (p === 'password') {
+      this.hasPasswordProvider = true;
+    }
+    else {
+      this.hasOauthProviders = true;
+    }
     this.authProviders.push(providerMap[p]);
   }, this);
 };
 
 //angularfire
-Generator.prototype._defaultNamespace = function(envValue, prompts) {
-  if( envValue ) {
-    prompts.forEach(function(p) {
-      if(p.name === 'firebaseName' ) {
+Generator.prototype._defaultNamespace = function (envValue, prompts) {
+  if (envValue) {
+    prompts.forEach(function (p) {
+      if (p.name === 'databaseURL') {
         p.default = envValue;
         return false;
       }

@@ -1,7 +1,7 @@
 {
-  "name": "generator-angularfire",
-  "version": "1.0.0",
-  "description": "Yeoman generator for Angular+Firebase",
+  "name": "generator-angularfire-express",
+  "version": "1.0.5",
+  "description": "Yeoman generator for Angular + Firebase(SDK 3.0) + Minimalist Express",
   "keywords": [
     "yeoman-generator",
     "scaffold",
@@ -10,9 +10,10 @@
     "front-end",
     "app",
     "angular",
-    "firebase"
+    "firebase",
+    "express"
   ],
-  "author": "Kato (with thanks to Yeoman and Angular teams)",
+  "author": "matheushf (Based in Kato repo, with thanks to Yeoman and Angular teams)",
   "main": "app/index.js",
   "files": [
     "app",
@@ -30,11 +31,13 @@
     "templates",
     "value",
     "view",
+    "base",
     "script-base.js",
+    "script-base2.js",
     "util.js",
     "angularfire"
   ],
-  "repository": "firebase/generator-angularfire",
+  "repository": "matheushf/generator-angularfire-express",
   "scripts": {
     "test": "mocha"
   },
@@ -42,12 +45,17 @@
     "chalk": "^1.0.0",
     "wiredep": "^2.2.0",
     "yeoman-generator": "^0.16.0",
-    "yosay": "^1.0.2"
+    "yosay": "^1.0.2",
+    "fs-extra": "^0.30.0",
+    "generator-karma": "^2.0.0"
   },
   "peerDependencies": {
     "generator-karma": ">=0.9.0"
   },
   "devDependencies": {
+    "angular": "^1.3.0",
+    "fs-extra": "^0.30.0",
+    "generator-karma": "^2.0.0",
     "grunt": "^0.4.5",
     "grunt-contrib-jshint": "^0.11.0",
     "grunt-conventional-changelog": "^1.1.0",

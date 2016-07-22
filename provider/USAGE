@@ -1,9 +1,9 @@
 Description:
     Creates a new AngularJS service.
-    Docs: http://docs.angularjs.org/guide/dev_guide.services.creating_services
+    Docs: https://docs.angularjs.org/api/ng/provider
 
 Example:
-    yo angularfire:provider thing [--coffee]
+    yo angularfire-express:provider thing [--coffee]
 
     This will create:
         app/scripts/services/thing.js

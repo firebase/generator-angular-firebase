@@ -30,7 +30,7 @@ describe('Angular generator route', function () {
         done(err);
       }
       angular = helpers.createGenerator(
-        'angularfire:app',
+        'angularfire-express:app',
         [
           '../../../app',
           '../../../common',
@@ -46,7 +46,7 @@ describe('Angular generator route', function () {
       helpers.mockPrompt(angular, mockPrompts);
       angular.run({}, function () {
         angular = helpers.createGenerator(
-          'angularfire:route',
+          'angularfire-express:route',
           [
             '../../../controller',
             '../../../route',
@@ -66,7 +66,7 @@ describe('Angular generator route', function () {
       angular.run({}, function(e) {
         helpers.assertFile(expected);
         helpers.assertFileContent(
-          'app/scripts/app.js',
+          'app/scripts/routes.js',
           new RegExp('when\\(\'/' + route + '\'')
         );
 
@@ -82,7 +82,7 @@ describe('Angular generator route', function () {
       angular.run({}, function() {
         helpers.assertFile(expected);
         helpers.assertFileContent(
-          'app/scripts/app.js',
+          'app/scripts/routes.js',
           new RegExp('when\\(\'/' + uri + '\'')
         );
 

@@ -62,9 +62,9 @@ angular.module('<%= scriptAppName %>')
 
 // configure views; whenAuthenticated adds a resolve method to ensure users authenticate
 // before trying to access that route
-  .config(['$routeProvider', function ($routeProvider) {
-    $routeProvider
-      .when('/', {
+  .config(['$stateProvider', function ($stateProvider) {
+    $stateProvider
+      .state('root', {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl',
         resolve: {
@@ -73,16 +73,16 @@ angular.module('<%= scriptAppName %>')
           }]
         }
       })
-      .when('/about', {
+      .state('about', {
         templateUrl: 'views/about.html',
         controller: 'AboutCtrl',
         controllerAs: 'about'
       })
-      .when('/login', {
+      .state('login', {
         templateUrl: 'views/login.html',
         controller: 'LoginCtrl'
       })
-      .when('/account', {
+      .state('account', {
         templateUrl: 'views/account.html',
         controller: 'AccountCtrl',
         resolve: {
@@ -92,7 +92,7 @@ angular.module('<%= scriptAppName %>')
           }]
         }
       })
-      .when('/chat', {
+      .state('chat', {
         templateUrl: 'views/chat.html',
         controller: 'Chat',
         resolve: {
@@ -102,7 +102,7 @@ angular.module('<%= scriptAppName %>')
         }
       })
       .otherwise({
-        redirectTo: '/'
+        redirectTo: 'root'
       });
 
   }])
@@ -113,8 +113,8 @@ angular.module('<%= scriptAppName %>')
    * for changes in auth status which might require us to navigate away from a path
    * that we can no longer view.
    */
-  .run(['$rootScope', '$location', 'loginRedirectPath',
-    function ($rootScope, $location, loginRedirectPath, event, next, previous, error) {
+  .run(['$rootScope', '$state', 'loginRedirectPath',
+    function ($rootScope, loginRedirectPath, event, toState, toParams, fromState, fromParams, error) {
 
 
       // watch for login status changes and redirect if appropriate
@@ -124,7 +124,7 @@ angular.module('<%= scriptAppName %>')
       // this redirects to the login page whenever that is encountered
       $rootScope.$on("$routeChangeError", function (event, next, previous, error) {
         if (error === "AUTH_REQUIRED") {
-          $location.path(loginRedirectPath);
+          $state.go(loginRedirectPath);
         }
       });
     }

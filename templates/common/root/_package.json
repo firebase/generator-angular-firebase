@@ -29,7 +29,12 @@
     "jshint-stylish": "^1.0.0",
     "load-grunt-tasks": "^3.1.0",
     "time-grunt": "^1.0.0",
-    "chalk": "^0.4.0"
+    "chalk": "^0.4.0"<% if (express) { %>,
+    "express": "^4.14.0",
+    "body-parser": "^1.15.2",
+    "grunt-open": "^0.2.3",
+    "grunt-express-server": "^0.5.3"<% } %>
+
   },
   "engines": {
     "node": ">=0.10.0"

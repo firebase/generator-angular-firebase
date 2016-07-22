@@ -1,5 +1,6 @@
 'use strict';
 
+
 var path = require('path');
 var helpers = require('yeoman-generator').test;
 
@@ -20,7 +21,7 @@ describe('Angular generator template', function () {
         done(err);
       }
 
-      angular = helpers.createGenerator('angularfire:app', deps, [appName], {
+      angular = helpers.createGenerator('angularfire-express:app', deps, [appName], {
         'appPath': 'app',
         'skip-welcome-message': true,
         'skip-install': true,
