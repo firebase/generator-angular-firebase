@@ -2,7 +2,7 @@
 var path = require('path');
 var chalk = require('chalk');
 var util = require('util');
-var ScriptBase = require('../script-base.js');
+var ScriptBase = require('../script-base2.js');
 var angularUtils = require('../util.js');
 
 
