@@ -28,8 +28,10 @@
     "route",
     "service",
     "templates",
+    "util",
     "value",
     "view",
+    "angularfire-config.json",
     "script-base.js",
     "util.js",
     "angularfire"
